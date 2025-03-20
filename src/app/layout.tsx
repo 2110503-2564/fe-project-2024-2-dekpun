@@ -27,6 +27,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <NextAuthProvider session={session}>
+            <div className="w-full h-[20px] bg-blue-800"></div>
             <TopMenu/>
             {children}
           </NextAuthProvider>

@@ -12,8 +12,8 @@ export default async function TopMenu() {
     return(
         <div className={styles.menucontainer}>
             <Image src={'/img/logo.png'} className={styles.logoimg} alt='logo' width={0} height={0} sizes='100vh'/>
-            <TopMenuItem title='Select Car' pageRef='/car'/>
-            <TopMenuItem title='Reservation' pageRef='/reservations'/>
+            <TopMenuItem title='Dentists' pageRef='/car'/>
+            <TopMenuItem title='Appointment' pageRef='/reservations'/>
             <TopMenuItem title='About' pageRef='/about'/>
 
             <div className='flex flex-row absolute right-0 h-full'>

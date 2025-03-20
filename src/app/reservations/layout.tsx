@@ -1,4 +1,4 @@
-import ReservationMenu from "@/components/ReservationMenu";
+import ReservationMenu from "@/components/AppointmentMenu";
 import styles from './reservations.module.css'
 
 

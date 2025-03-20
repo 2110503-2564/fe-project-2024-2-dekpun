@@ -1,5 +1,5 @@
 'use client'
-import ReservationCart from "@/components/ReservationCart"
+import ReservationCart from "@/components/MyAppointment"
 
 export default function CartPage() {
     return (
