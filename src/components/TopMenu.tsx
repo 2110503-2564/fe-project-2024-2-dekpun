@@ -10,24 +10,25 @@ export default async function TopMenu() {
     const session = await getServerSession(authOptions)
 
     return(
-        <div className={styles.menucontainer}>
-            <Image src={'/img/logo.png'} className={styles.logoimg} alt='logo' width={0} height={0} sizes='100vh'/>
-            <TopMenuItem title='Dentists' pageRef='/car'/>
-            <TopMenuItem title='Appointment' pageRef='/reservations'/>
+        <div className="w-full h-[70px] bg-white fixed t-[0] l-[0] r-[0] z-30 border-t border-b border-gray-300 flex flex-row">
+            <Image src={'/img/logo.png'} className="h-[100%] w-auto" alt='logo' width={0} height={0} sizes='100vh'/>
+            <TopMenuItem title='Dentists' pageRef='/dentist'/> 
+            <TopMenuItem title='Appointment' pageRef='/appointment'/>
             <TopMenuItem title='About' pageRef='/about'/>
 
-            <div className='flex flex-row absolute right-0 h-full'>
-                <TopMenuItem title='Cart' pageRef='/cart'/>
+            <div className='flex flex-row absolute right-5 h-full'>
+                <TopMenuItem title='My Appointment' pageRef='/appointmentlist'/>
                 {
                     session ? 
                     <Link href="/api/auth/signout">
-                        <div className='flex items-center h-full px-2 text-cyan-600 text-sm'>
-                            Sign-Out of {session.user?.name}
+                        <div className='flex items-center h-full px-2 text-cyan-600 text-sm ml-5'>
+                            <Image src={'/img/profile_user.png'} className='h-[40px] w-[40px]' alt='user profile' width={0} height={0} sizes='auto'/>
+                            {/* Sign-Out of {session.user?.name} */}
                         </div>
                     </Link>
                     : 
                     <Link href="/api/auth/signin">
-                        <div className='flex items-center h-full px-2 text-cyan-600 text-sm'>
+                        <div className='flex items-center h-full px-2 text-cyan-600 text-sm ml-5'>
                             Sign-In
                         </div>
                     </Link>

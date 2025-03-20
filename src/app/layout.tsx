@@ -24,11 +24,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} m-0 p-0`}>
         <ReduxProvider>
           <NextAuthProvider session={session}>
-            <div className="w-full h-[20px] bg-blue-800"></div>
             <TopMenu/>
+            <div className="w-full h-[20px] bg-blue-800 mt-[70px]"></div>
             {children}
           </NextAuthProvider>
         </ReduxProvider>
