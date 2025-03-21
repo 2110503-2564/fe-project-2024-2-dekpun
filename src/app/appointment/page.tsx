@@ -6,7 +6,6 @@ import { Select, MenuItem, TextField, FormControl, InputLabel } from "@mui/mater
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import dayjs, { Dayjs } from "dayjs";
-import { AppointmentItem } from "../../../interface";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
