@@ -11,7 +11,9 @@ export default async function TopMenu() {
 
     return(
         <div className="w-full h-[70px] bg-white fixed t-[0] l-[0] r-[0] z-30 border-t border-b border-gray-300 flex flex-row">
-            <Image src={'/img/logo.png'} className="h-[100%] w-auto" alt='logo' width={0} height={0} sizes='100vh'/>
+            <Link href="/" className="h-[100%] w-[172px]">
+                <Image src={'/img/logo.png'} className="h-[100%] w-auto" alt='logo' width={0} height={0} sizes='100vh'/>
+            </Link>
             <TopMenuItem title='Dentists' pageRef='/dentist'/> 
             <TopMenuItem title='Appointment' pageRef='/appointment'/>
             <TopMenuItem title='About' pageRef='/about'/>

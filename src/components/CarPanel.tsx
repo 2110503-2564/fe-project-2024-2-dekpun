@@ -1,8 +1,8 @@
 'use client'
 import { useReducer, useRef, useEffect, useState } from "react"
 import Link from "next/link"
-import ProductCard from "./ProductCard"
-import getcars from "@/libs/getCars"
+import ProductCard from "./RoleCard"
+import getcars from "@/libs/getDentists"
 
 export default function CarPanel() {
 
