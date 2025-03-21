@@ -5,11 +5,11 @@ export default async function getUserProfile(token:string) {
         headers: {
             authorization: `Bearer ${token}`,
         }
-    })
+    });
 
-    if(!response.ok){
-        throw new Error("Cannot get user profile")
+    if (!response.ok){
+        throw new Error("Cannot get user profile");
     }
 
-    return await response.json()
-}
+    return await response.json();
+};

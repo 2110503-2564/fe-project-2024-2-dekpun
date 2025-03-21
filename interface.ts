@@ -10,23 +10,23 @@ interface VenueItem {
     dailyrate: number,
     __v: number,
     id: string
-  }
+}
   
-  interface VenueJson {
+interface VenueJson {
     success: boolean,
     count: number,
     pagination: Object,
     data: VenueItem[]
-  }
+}
 
-  interface BookingItem {
+interface BookingItem {
     nameLastname: string;
     tel: string;
     venue: string;
     bookDate: string;
-  }
+}
 
-export interface AppointmentItem {
+interface AppointmentItem {
     nameLastname: string;
     tel: string;
     birthday: string;
@@ -34,4 +34,4 @@ export interface AppointmentItem {
     clinic: string;
     purpose: string;
     appointmentDate: string;
-  }
+}

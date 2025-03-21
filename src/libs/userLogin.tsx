@@ -9,12 +9,11 @@ export default async function userLogin(userEmail:string, userPassword:string) {
             email: userEmail,
             password: userPassword
         }),
-    }) 
+    });
 
-    if(!response.ok) {
-        throw new Error("Failed to log-in")
+    if (!response.ok) {
+        throw new Error("Failed to log-in");
     }
 
-    return await response.json()
-
-}
+    return await response.json();
+};
