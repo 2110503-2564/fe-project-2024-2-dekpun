@@ -1,62 +1,145 @@
 'use client'
-import LocationDateReserve from "@/components/LocationDateReserve";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers"; 
+import { Select, MenuItem, TextField, FormControl, InputLabel } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import dayjs, { Dayjs } from "dayjs";
-import { useDispatch, UseDispatch } from "react-redux";
+import { AppointmentItem } from "../../../interface";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { ReservationItem } from "../../../interfaces";
 import { addReservation } from "@/redux/features/cartSlice";
 
 export default function Reservations() {
+    const dispatch = useDispatch<AppDispatch>();
 
-    const urlParams = useSearchParams()
-    const cid = urlParams.get('id')
-    const model = urlParams.get('model')
+    const [nameLastname, setNameLastname] = useState<string>("");
+    const [tel, setTel] = useState<string>("");
+    const [birthday, setBirthday] = useState<Dayjs | null>(null);
+    const [gender, setGender] = useState<string>("");
+    const [purpose, setPurpose] = useState<string>("");
+    const [appointmentDate, setAppointmentDate] = useState<Dayjs | null>(null);
 
-    const dispatch = useDispatch<AppDispatch>() 
+    const clinic = "Dekpun Clinic";
 
-    const makeReservation = () => {
-        if(cid && model && pickUpDate && returnDate) {
-            const item:ReservationItem = {
-                carId: cid,
-                carModel: model,
-                numOfDays: returnDate.diff(pickUpDate, "day"),
-                pickUpDate: dayjs(pickUpDate).format("YYYY/MM/DD"),
-                pickUpLoacation: pickUpLocation,
-                returnDate: dayjs(returnDate).format("YYYY/MM/DD"),
-                returnLocation: returnLocation
-            }
-            dispatch(addReservation(item))
+    const makeAppointment = () => {
+        if (nameLastname && tel && birthday && gender && clinic && purpose && appointmentDate) {
+            const item: AppointmentItem = {
+                nameLastname,
+                tel,
+                birthday: dayjs(birthday).format('DD/MM/YYYY'),
+                gender,
+                clinic,
+                purpose,
+                appointmentDate: dayjs(appointmentDate).format('DD/MM/YYYY'),
+            };
+            dispatch(addReservation(item));
         }
-    }
+    };
 
-    const [pickUpDate, setPickUpDate ] = useState<Dayjs | null>(null)
-    const [pickUpLocation, setPickUpLocation ] = useState<string>('BKK')
-    const [returnDate, setReturnDate ] = useState<Dayjs | null>(null)
-    const [returnLocation, setReturnLocation ] = useState<string>('BKK')
+    return (
+        <main className="flex flex-col items-center w-full min-h-screen py-10 bg-gray-100">
+            <div className="text-4xl font-bold text-blue-800 mb-6">New Appointment</div>
 
-    return(
-        <main className="w-[100%] flex flex-col items-center space-y-4">
-            <div className="text-xl font-medium">New Reservation</div>
-            <div className="text-xl font-medium">Car: {model}</div>
+            <div className="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg space-y-6">
+                {/* Name & Contact */}
+                <TextField 
+                    label="Full Name" 
+                    fullWidth 
+                    required 
+                    value={nameLastname}
+                    onChange={(e) => setNameLastname(e.target.value)}
+                />
+                
+                <TextField 
+                    label="Contact Number" 
+                    fullWidth 
+                    required 
+                    value={tel}
+                    onChange={(e) => setTel(e.target.value)}
+                />
 
-            <div className="w-fit space-y-2">
-                <div className="text-md text-left text-gray-600">Pick-Up Date and Location</div>
-                <LocationDateReserve 
-                    onDateChange={(value:Dayjs)=>{setPickUpDate(value)}}
-                    onLocationChange={(value:string)=>{setPickUpLocation(value)}}/>
+                {/* Birthday & Gender */}
+                <div className="flex space-x-4">
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker 
+                            label="Date of Birth"
+                            value={birthday} 
+                            onChange={(value) => setBirthday(value)} 
+                            className="w-full bg-white"
+                        />
+                    </LocalizationProvider>
 
-                <div className="text-md text-left text-gray-600">Return Date and Location</div>
-                <LocationDateReserve
-                    onDateChange={(value:Dayjs)=>{setReturnDate(value)}}
-                    onLocationChange={(value:string)=>{setReturnLocation(value)}}/>
+                    <FormControl fullWidth>
+                        <InputLabel>Gender</InputLabel>
+                        <Select 
+                            value={gender} 
+                            onChange={(e) => setGender(e.target.value)} 
+                            required
+                        >
+                            <MenuItem value="Male">Male</MenuItem>
+                            <MenuItem value="Female">Female</MenuItem>
+                            <MenuItem value="Unidentified">Unidentified</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
+
+                {/* Clinic */}
+                <TextField 
+                    label="Clinic" 
+                    fullWidth 
+                    required 
+                    value={clinic} 
+                    disabled
+                />
+
+                {/* Purpose */}
+                <FormControl fullWidth>
+                    <InputLabel>Purpose</InputLabel>
+                    <Select 
+                        value={purpose} 
+                        onChange={(e) => setPurpose(e.target.value)} 
+                        required
+                    >
+                        <MenuItem value="Orthodontics">Orthodontics</MenuItem>
+                        <MenuItem value="Conscious_sedation">Conscious sedation</MenuItem>
+                        <MenuItem value="Prosthodontics">Prosthodontics</MenuItem>
+                        <MenuItem value="Dental_implant">Dental implant</MenuItem>
+                        <MenuItem value="Crown">Crown</MenuItem>
+                        <MenuItem value="Root_canal_treatment">Root canal treatment</MenuItem>
+                        <MenuItem value="Pediatric_dentistry">Pediatric dentistry</MenuItem>
+                        <MenuItem value="Dental_restoration">Dental restoration</MenuItem>
+                        <MenuItem value="X-ray">X-ray</MenuItem>
+                        <MenuItem value="Dentistry">Dentistry</MenuItem>
+                        <MenuItem value="Veneer">Veneer</MenuItem>
+                        <MenuItem value="Periodontics">Periodontics</MenuItem>
+                        <MenuItem value="Fluoride_treatment">Fluoride treatment</MenuItem>
+                        <MenuItem value="Dental_extraction">Dental extraction</MenuItem>
+                        <MenuItem value="Restorative_dentistry">Restorative dentistry</MenuItem>
+                        <MenuItem value="Oral_surgery">Oral surgery</MenuItem>
+                    </Select>
+                </FormControl>
+
+                {/* Appointment Date */}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker 
+                        label="Appointment Date" 
+                        value={appointmentDate} 
+                        onChange={(value) => setAppointmentDate(value)}
+                        className="w-full bg-white"
+                    />
+                </LocalizationProvider>
+
+                {/* Confirm Button */}
+                <button 
+                    className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300"
+                    onClick={makeAppointment}
+                >
+                    Confirm Appointment
+                </button>
             </div>
-
-            <button className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-2 text-white shadow-sm"
-                onClick={makeReservation}>
-                    Reserve This Car
-            </button>
         </main>
     );
 }

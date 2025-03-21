@@ -25,3 +25,13 @@ interface VenueItem {
     venue: string;
     bookDate: string;
   }
+
+export interface AppointmentItem {
+    nameLastname: string;
+    tel: string;
+    birthday: string;
+    gender: string;
+    clinic: string;
+    purpose: string;
+    appointmentDate: string;
+  }
