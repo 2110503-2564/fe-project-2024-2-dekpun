@@ -17,6 +17,12 @@ interface DentistJson {
     _id: string
 }
 
+interface DentistExistence {
+    area_id: string,
+    area_name: string, 
+    area_existence: boolean
+}
+
 interface AppointmentJson {
     success: boolean,
     numbers_of_booking: number,
