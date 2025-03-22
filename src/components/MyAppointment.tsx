@@ -1,4 +1,4 @@
-'use client'  // Ensure this is a Client Component
+"use client"  // Ensure this is a Client Component
 
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
@@ -36,6 +36,9 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                             <div className="text-xl font-semibold text-gray-800">
                                 {appointmentItem.user.name}
                             </div>
+                            <div className="text-xl font-semibold text-gray-800">
+                                Dentist: {appointmentItem.dentist.name}
+                            </div>
                             <div className="text-lg text-blue-600 font-medium">
                                 {appointmentItem.booking_date}
                             </div>
@@ -46,7 +49,7 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                 <strong>Purpose:</strong> {appointmentItem.dentist.area_of_expertise}
                             </div>
                             <div className={`text-sm font-semibold 
-                                ${appointmentItem.booking_status === 'booked' ? 'text-green-600' : 'text-red-600'}`}>
+                                ${appointmentItem.booking_status === "booked" ? "text-green-600" : "text-red-600"}`}>
                                 {appointmentItem.booking_status}
                             </div>
 
@@ -54,7 +57,7 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                 <Button 
                                     variant="contained" 
                                     color="primary"
-                                    onClick={() => alert('Edit feature coming soon!')}
+                                    onClick={() => alert("Edit feature coming soon!")}
                                 >
                                     Edit
                                 </Button>

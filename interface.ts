@@ -1,13 +1,20 @@
-interface AppointmentItem {
-    aid?: string;
-    nameLastname: string;
-    tel: string;
-    birthday: string;
-    gender: string;
-    clinic: string;
-    purpose: string;
-    appointmentDate: string;
-    bookStatus?: string;
+interface UserJson {
+    id: string,
+    email: string,
+    name: string,
+    tel: string,
+    gender: string,
+    birthdate: Date,
+    _id: string
+}
+
+interface DentistJson {
+    id: string,
+    name: string, 
+    area_of_expertise: string,
+    year_of_experience: number,
+    clinic_branch: string,
+    _id: string
 }
 
 interface AppointmentJson {
@@ -17,26 +24,17 @@ interface AppointmentJson {
     data: AppointmentData[]
 }
 
+interface AppointmentItem {
+    clinicBranch: string,
+    purpose: string,
+    appointmentDate: string,
+    bookStatus?: string
+}
+
 interface AppointmentData {
-    booking_status: string,
-    _id: string,
     user: UserJson,
     dentist: DentistJson,
     booking_date: string
-}
-
-interface UserJson {
-    email: string,
-    id: string,
-    name: string,
-    tel: string,
-    _id: string
-}
-
-interface DentistJson {
-    area_of_expertise: string,
-    id: string,
-    name: string, 
-    year_of_experience: string,
-    _id: string
+    booking_status: string,
+    _id: string,
 }
