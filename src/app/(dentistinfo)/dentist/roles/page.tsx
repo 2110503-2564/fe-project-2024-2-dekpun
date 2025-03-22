@@ -1,8 +1,9 @@
+"use client"
 import RoleCatalog from "@/components/RoleCatalog";
 import { Suspense } from "react";
 import { LinearProgress } from "@mui/material";
 
-export default function Dentist() {
+export default function DentistRoles() {
 
     return(
         <main className="text-center p-5">

@@ -1,7 +1,9 @@
-import Link from "next/link";
-import RoleCard from "./RoleCard";
+"use client"
+import { Suspense } from "react";
+import { LinearProgress } from "@mui/material";
+import DentistCatalog from "@/components/DentistCatalog";
 
-export default async function RoleCatalog() {
+export default function DentistByRole( { params } : { params: { area:string } } ) {
 
     const AreaOfExpertiseList = [
         { area_name: "Orthodontics", area_id: "orthodontics", image: "/img/role_img/Orthodontics.jpeg" }, 
@@ -22,22 +24,12 @@ export default async function RoleCatalog() {
         { area_name: "Oral surgery", area_id: "oral_surgery", image: "/img/role_img/Oral_surgery.jpg" }, 
         { area_name: "Periodontics", area_id: "periodontics", image: "/img/role_img/Periodontics.jpg" },
     ];
-
+    
     return (
-        <main className="flex flex-col items-center px-6 py-12 bg-gradient-to-br from-blue-100 to-gray-200 min-h-screen rounded-3xl">
-            <h1 className="text-4xl font-semibold text-blue-800 mb-8 text-center">
-                Explore Our {AreaOfExpertiseList.length} Areas of Expertise
-            </h1>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-                {
-                    AreaOfExpertiseList.map((roleItem) => (
-                        <Link key={roleItem.area_id} href={`roles/${roleItem.area_id}`} className="transition-transform duration-300 hover:scale-105">
-                            <RoleCard roleName={roleItem.area_name} imgSrc={roleItem.image} />
-                        </Link>
-                    ))
-                }
-            </div>
+        <main className="text-center p-5">
+            <Suspense fallback={ <p>Loading ... <LinearProgress/></p> }>
+                <DentistCatalog role={ AreaOfExpertiseList.find(item => item.area_id === params.area)?.area_name } />
+            </Suspense>
         </main>
     );
-}
+};

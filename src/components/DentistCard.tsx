@@ -1,20 +1,20 @@
 import Image from "next/image";
 import InteractiveCard from "./InteractiveCard";
 
-export default function RoleCard({ roleName, imgSrc, onCompare }: { roleName: string; imgSrc: string; onCompare?: Function }) {
+export default function DentistCard( { dentistName, imgSrc, onCompare }: { dentistName: string; imgSrc: string; onCompare?: Function } ) {
     return (
-        <InteractiveCard contentName={roleName}>
+        <InteractiveCard contentName={ dentistName }>
             <div className="relative w-full h-[220px] rounded-t-lg overflow-hidden">
                 <Image
-                    src={imgSrc}
-                    alt={roleName}
+                    src={ imgSrc }
+                    alt={ dentistName }
                     layout="fill"
                     objectFit="cover"
                     className="rounded-t-lg transition-transform duration-500 hover:scale-110"
                 />
             </div>
             <div className="p-4 text-center text-xl font-semibold text-gray-900 bg-white/70 backdrop-blur-md rounded-b-lg">
-                { roleName }
+                { dentistName }
             </div>
 
             {
@@ -25,7 +25,7 @@ export default function RoleCard({ roleName, imgSrc, onCompare }: { roleName: st
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                onCompare(roleName);
+                                onCompare(dentistName);
                             }}
                         >
                             Compare
