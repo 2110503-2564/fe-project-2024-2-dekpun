@@ -36,6 +36,9 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                             <div className="text-xl font-semibold text-gray-800">
                                 {appointmentItem.user.name}
                             </div>
+                            <div className="text-xl font-semibold text-gray-800">
+                                Dentist: {appointmentItem.dentist.name}
+                            </div>
                             <div className="text-lg text-blue-600 font-medium">
                                 {appointmentItem.booking_date}
                             </div>
@@ -63,7 +66,7 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                     color="error"
                                     onClick={() => dispatch(removeAppointment(appointmentItem))}
                                 >
-                                    Cancel
+                                    Cancel 
                                 </Button>
                             </div>
                         </CardContent>
