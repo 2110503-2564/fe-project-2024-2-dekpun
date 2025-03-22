@@ -38,3 +38,8 @@ interface AppointmentData {
     booking_status: string,
     _id: string,
 }
+
+interface MyAppointmentProps {
+    appointmentsJson: AppointmentJson | null;
+    session: any;
+}

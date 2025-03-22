@@ -7,10 +7,6 @@ import { removeAppointment } from "@/redux/features/appointmentSlice";
 import { Card, CardContent, Button } from "@mui/material";
 
 // Type definition for the props
-interface MyAppointmentProps {
-    appointmentsJson: AppointmentJson | null;
-    session: any;
-}
 
 export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) {
     const dispatch = useDispatch<AppDispatch>();
