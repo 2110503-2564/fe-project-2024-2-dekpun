@@ -5,43 +5,47 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { Select, MenuItem, TextField, FormControl, InputLabel, Card, CardContent, Button, Grid } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { addAppointment } from "@/redux/features/appointmentSlice";
+import { getrole } from "@/lib/getrole"; // Import backend function
 
-export default function Reservations() {
+export default function Appointment() {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [nameLastname, setNameLastname] = useState<string>("");
-    const [tel, setTel] = useState<string>("");
-    const [birthday, setBirthday] = useState<Dayjs | null>(null);
-    const [gender, setGender] = useState<string>("");
-    const [purpose, setPurpose] = useState<string>("");
-    const [appointmentDate, setAppointmentDate] = useState<Dayjs | null>(null);
-    const [dentist, setDentist] = useState<string>("");
+    const [formData, setFormData] = useState({
+        nameLastname: "",
+        tel: "",
+        gender: "",
+        purpose: "",
+        dentist: "",
+        birthday: null as Dayjs | null,
+        appointmentDate: null as Dayjs | null,
+    });
 
+    const [dentists, setDentists] = useState<{ name: string; area_of_expertise: string }[]>([]);
     const clinic = "Dekpun Clinic";
 
-    // 15 Mock Dentists
-    const dentists = Array.from({ length: 15 }, (_, i) => ({
-        name: `Dr. Dentist ${i + 1}`,
-        info: `Expert in specialty #${i + 1}`
-    }));
+    // Fetch dentists when purpose changes
+    useEffect(() => {
+        const fetchDentists = async () => {
+            if (formData.purpose) {
+                const fetchedDentists = await getrole(formData.purpose);
+                setDentists(fetchedDentists);
+                setFormData(prev => ({ ...prev, dentist: "" })); // Reset selected dentist
+            }
+        };
+        fetchDentists();
+    }, [formData.purpose]);
+
+    const handleInputChange = (e: React.ChangeEvent<{ value: unknown }>, field: string) => {
+        setFormData(prev => ({ ...prev, [field]: e.target.value as string }));
+    };
 
     const makeAppointment = () => {
-        if(nameLastname && tel && birthday && gender && clinic && purpose && appointmentDate && dentist) {
-            const item: AppointmentItem = { 
-                nameLastname: nameLastname,
-                tel: tel,
-                birthday: dayjs(birthday).format('DD/MM/YYYY'),
-                gender: gender,
-                clinic: clinic,
-                purpose: purpose,
-                appointmentDate: dayjs(appointmentDate).format('DD/MM/YYYY'),
-                dentist: dentist
-            };
-            dispatch(addAppointment(item));
+        if (Object.values(formData).every(val => val !== "" && val !== null)) {
+            dispatch(addAppointment({ ...formData, clinic, birthday: dayjs(formData.birthday).format('DD/MM/YYYY'), appointmentDate: dayjs(formData.appointmentDate).format('DD/MM/YYYY') }));
         }
     };
 
@@ -50,19 +54,17 @@ export default function Reservations() {
             <div className="text-4xl font-bold text-blue-800 mb-6">New Appointment</div>
 
             <div className="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg space-y-6">
-                {/* Name & Contact */}
-                <TextField label="Full Name" fullWidth required value={nameLastname} onChange={(e) => setNameLastname(e.target.value)} />
-                <TextField label="Contact Number" fullWidth required value={tel} onChange={(e) => setTel(e.target.value)} />
+                <TextField label="Full Name" fullWidth required value={formData.nameLastname} onChange={(e) => handleInputChange(e, "nameLastname")} />
+                <TextField label="Contact Number" fullWidth required value={formData.tel} onChange={(e) => handleInputChange(e, "tel")} />
 
-                {/* Birthday & Gender */}
                 <div className="flex space-x-4">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker label="Date of Birth" value={birthday} onChange={(value) => setBirthday(value)} className="w-full bg-white" />
+                        <DatePicker label="Date of Birth" value={formData.birthday} onChange={(value) => setFormData(prev => ({ ...prev, birthday: value }))} className="w-full bg-white" />
                     </LocalizationProvider>
 
                     <FormControl fullWidth>
                         <InputLabel>Gender</InputLabel>
-                        <Select label="Gender" value={gender} onChange={(e) => setGender(e.target.value)} required>
+                        <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} required>
                             <MenuItem value="Male">Male</MenuItem>
                             <MenuItem value="Female">Female</MenuItem>
                             <MenuItem value="Unidentified">Unidentified</MenuItem>
@@ -70,26 +72,28 @@ export default function Reservations() {
                     </FormControl>
                 </div>
 
-                {/* Clinic */}
                 <TextField label="Clinic" fullWidth required value={clinic} disabled />
 
-                {/* Purpose */}
                 <FormControl fullWidth>
                     <InputLabel>Purpose</InputLabel>
-                    <Select label="Purpose" value={purpose} onChange={(e) => setPurpose(e.target.value)} required>
-                        <MenuItem value="Dentistry">Dentistry</MenuItem>
+                    <Select value={formData.purpose} onChange={(e) => handleInputChange(e, "purpose")} required>
                         <MenuItem value="Orthodontics">Orthodontics</MenuItem>
-                        <MenuItem value="Root_canal_treatment">Root canal treatment</MenuItem>
-                        <MenuItem value="Pediatric_dentistry">Pediatric dentistry</MenuItem>
+                        <MenuItem value="Prosthodontics">Prosthodontics</MenuItem>
+                        <MenuItem value="Dental implant">Dental implant</MenuItem>
+                        <MenuItem value="Crown">Crown</MenuItem>
+                        <MenuItem value="Root canal treatment">Root canal treatment</MenuItem>
+                        <MenuItem value="Pediatric dentistry">Pediatric dentistry</MenuItem>
+                        <MenuItem value="Dentistry">Dentistry</MenuItem>
+                        <MenuItem value="Veneer">Veneer</MenuItem>
+                        <MenuItem value="Periodontics">Periodontics</MenuItem>
+                        <MenuItem value="Fluoride treatment">Fluoride treatment</MenuItem>
                     </Select>
                 </FormControl>
 
                 {/* Dentist Selection */}
-                {purpose === "Dentistry" && (
+                {dentists.length > 0 && (
                     <div className="w-full">
-                        <TextField label="Dentist" fullWidth required value={dentist} disabled />
-
-                        {/* Scrollable Dentist List */}
+                        <TextField label="Dentist" fullWidth required value={formData.dentist} disabled />
                         <div className="mt-4 max-h-80 overflow-y-auto border p-2 rounded-lg shadow-inner">
                             <Grid container spacing={2} direction="column">
                                 {dentists.map((dentistInfo, index) => (
@@ -98,9 +102,9 @@ export default function Reservations() {
                                             <CardContent className="flex justify-between items-center">
                                                 <div>
                                                     <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
-                                                    <p className="text-gray-600">{dentistInfo.info}</p>
+                                                    <p className="text-gray-600">Expert in {dentistInfo.area_of_expertise}</p>
                                                 </div>
-                                                <Button variant="contained" color="primary" onClick={() => setDentist(dentistInfo.name)}>
+                                                <Button variant="contained" color="primary" onClick={() => setFormData(prev => ({ ...prev, dentist: dentistInfo.name }))}>
                                                     Select
                                                 </Button>
                                             </CardContent>
@@ -112,12 +116,10 @@ export default function Reservations() {
                     </div>
                 )}
 
-                {/* Appointment Date */}
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label="Appointment Date" value={appointmentDate} onChange={(value) => setAppointmentDate(value)} className="w-full bg-white" />
+                    <DatePicker label="Appointment Date" value={formData.appointmentDate} onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} className="w-full bg-white" />
                 </LocalizationProvider>
 
-                {/* Confirm Button */}
                 <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" onClick={makeAppointment}>
                     Confirm Appointment
                 </button>
