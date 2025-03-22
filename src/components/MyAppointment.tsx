@@ -66,7 +66,7 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                     color="error"
                                     onClick={() => dispatch(removeAppointment(appointmentItem))}
                                 >
-                                    Cancel
+                                    Cancel 
                                 </Button>
                             </div>
                         </CardContent>
