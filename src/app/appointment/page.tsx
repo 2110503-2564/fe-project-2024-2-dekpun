@@ -24,7 +24,7 @@ export default function Appointment() {
 
     const makeAppointment = () => {
         if(nameLastname && tel && birthday && gender && clinic && purpose && appointmentDate) {
-            const item:AppointmentItem = {
+            const item:AppointmentItem = { 
                 nameLastname: nameLastname,
                 tel: tel,
                 birthday: dayjs(birthday).format('DD/MM/YYYY'),
@@ -33,7 +33,7 @@ export default function Appointment() {
                 purpose: purpose,
                 appointmentDate: dayjs(appointmentDate).format('DD/MM/YYYY')
             }
-            dispatch(addReservation(item))
+            dispatch(addAppointment(item))
         }
     }
 

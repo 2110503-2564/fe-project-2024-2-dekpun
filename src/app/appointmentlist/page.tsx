@@ -1,10 +1,19 @@
-'use client'
-import ReservationCart from "@/components/MyAppointment"
+import { useSession } from "next-auth/react";  // Add this import
+import MyAppointment from "@/components/MyAppointment";
+import getAppointments from "@/libs/getAppointments";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
-export default function CartPage() {
-    return (
-        <main>
-            <ReservationCart></ReservationCart>
-        </main>
-    )
+export default async function MyAppointmentPage() {
+  const session = await getServerSession(authOptions)
+  const token = session?.user?.token || ""; // Ensure you're using the correct token
+
+  // Fetch appointments with the token
+  const appointments = await getAppointments(token);
+
+  return (
+    <main>
+      <MyAppointment appointmentsJson={appointments} session={session} />
+    </main>
+  );
 }

@@ -1,5 +1,5 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import cartSlice from "./features/appointmentSlice";
+import appointmentSlice from "./features/appointmentSlice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -30,7 +30,7 @@ const persistConfig = {
     storage
 };
 
-const rootReducer = combineReducers({cartSlice});
+const rootReducer = combineReducers({appointmentSlice});
 const reduxPersistReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
