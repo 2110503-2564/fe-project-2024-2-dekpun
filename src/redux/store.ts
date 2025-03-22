@@ -1,9 +1,9 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import appointmentSlice from "./features/appointmentSlice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import { WebStorage } from "redux-persist";
+import authSlice from "./features/authSlice"; // Import auth slice
 
 function createPersistStorage(): WebStorage {
     const isServer = typeof window === 'undefined';
@@ -30,7 +30,10 @@ const persistConfig = {
     storage
 };
 
-const rootReducer = combineReducers({appointmentSlice});
+const rootReducer = combineReducers({
+    auth: authSlice, // Add auth slice here
+});
+
 const reduxPersistReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({

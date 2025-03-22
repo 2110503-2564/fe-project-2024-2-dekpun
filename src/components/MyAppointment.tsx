@@ -3,8 +3,8 @@
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { removeAppointment } from "@/redux/features/appointmentSlice";
 import { Card, CardContent, Button } from "@mui/material";
+import deleteAppointment from "@/libs/deleteAppointment";
 
 // Type definition for the props
 
@@ -14,7 +14,7 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
 
     // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
-        return <p>No appointments available.</p>;
+        return <p>No appointments available.</p>;  
     }
 
     console.log(appointmentsJson)
@@ -60,8 +60,8 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                 <Button 
                                     variant="outlined" 
                                     color="error"
-                                    onClick={() => dispatch(removeAppointment(appointmentItem))}
-                                >
+                                    onClick={() => deleteAppointment())}
+                                />
                                     Cancel 
                                 </Button>
                             </div>

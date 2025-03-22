@@ -1,3 +1,18 @@
+//GET BOOKINGS
+interface AppointmentJson {
+    success: boolean,
+    numbers_of_booking: number,
+    pagination: Object,
+    data: AppointmentData[]
+}
+interface AppointmentData {
+    user: UserJson,
+    dentist: DentistJson,
+    booking_date: string
+    booking_status: string,
+    _id: string,
+}
+
 interface UserJson {
     id: string,
     email: string,
@@ -17,35 +32,21 @@ interface DentistJson {
     _id: string
 }
 
-interface DentistExistence {
-    area_id: string,
-    area_name: string, 
-    area_existence: boolean
-}
-
-interface AppointmentJson {
-    success: boolean,
-    numbers_of_booking: number,
-    pagination: Object,
-    data: AppointmentData[]
-}
-
+//POST BOOKING (dentists/{:did}/bookings)
 interface AppointmentItem {
-    clinicBranch: string,
-    purpose: string,
+    uid: string,
     appointmentDate: string,
-    bookStatus?: string
+    bookStatus?: string //No need
 }
 
-interface AppointmentData {
-    user: UserJson,
-    dentist: DentistJson,
-    booking_date: string
-    booking_status: string,
-    _id: string,
-}
 
 interface MyAppointmentProps {
     appointmentsJson: AppointmentJson | null;
     session: any;
+}
+
+interface DentistExistence {
+    area_id: string,
+    area_name: string, 
+    area_existence: boolean
 }
