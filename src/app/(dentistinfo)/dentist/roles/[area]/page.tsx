@@ -24,11 +24,13 @@ export default function DentistByRole( { params } : { params: { area:string } } 
         { area_name: "Oral surgery", area_id: "oral_surgery", image: "/img/role_img/Oral_surgery.jpg" }, 
         { area_name: "Periodontics", area_id: "periodontics", image: "/img/role_img/Periodontics.jpg" },
     ];
+
+    const area = AreaOfExpertiseList.find(item => item.area_id === params.area);
     
     return (
         <main className="text-center p-5">
             <Suspense fallback={ <p>Loading ... <LinearProgress/></p> }>
-                <DentistCatalog role={ AreaOfExpertiseList.find(item => item.area_id === params.area)?.area_name } />
+                <DentistCatalog role={ area ? area.area_name : "" } />
             </Suspense>
         </main>
     );
