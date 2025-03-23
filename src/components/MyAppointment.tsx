@@ -5,18 +5,26 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { Card, CardContent, Button } from "@mui/material";
 import deleteAppointment from "@/libs/deleteAppointment";
+import { useSession } from "next-auth/react";
 
 // Type definition for the props
 
-export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) {
-    const dispatch = useDispatch<AppDispatch>();
+export default function MyAppointment({ appointmentsJson, session }: MyAppointmentProps) {
+
+    // const { data: session } = useSession();
+    // const dispatch = useDispatch<AppDispatch>();
     // const userItems = useAppSelector((state) => state.appointmentSlice.appointmentItems);
+
+    const token = session?.user.token
+    const uid = session?.user._id
 
     // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
         return <p>No appointments available.</p>;  
     }
 
+    console.log("uid: " + uid)
+    console.log("token: " + token)
     console.log(appointmentsJson)
 
     return (
@@ -53,15 +61,13 @@ export default function MyAppointment({ appointmentsJson }: MyAppointmentProps) 
                                 <Button 
                                     variant="contained" 
                                     color="primary"
-                                    onClick={() => alert("Edit feature coming soon!")}
-                                >
+                                    onClick={() => alert("Edit feature coming soon!")}>
                                     Edit
                                 </Button>
                                 <Button 
-                                    variant="outlined" 
+                                    variant="outlined"  
                                     color="error"
-                                    onClick={() => deleteAppointment())}
-                                />
+                                    onClick={() => deleteAppointment(appointmentItem._id, token)}>
                                     Cancel 
                                 </Button>
                             </div>

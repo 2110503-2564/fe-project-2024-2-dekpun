@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";  // Add this import
 import MyAppointment from "@/components/MyAppointment";
 import getAppointments from "@/libs/getAppointments";
 import { getServerSession } from "next-auth";

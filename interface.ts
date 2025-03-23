@@ -8,7 +8,7 @@ interface AppointmentJson {
 interface AppointmentData {
     user: UserJson,
     dentist: DentistJson,
-    booking_date: string
+    booking_date: string,
     booking_status: string,
     _id: string,
 }
@@ -35,7 +35,7 @@ interface DentistJson {
 //POST BOOKING (dentists/{:did}/bookings)
 interface AppointmentItem {
     uid: string,
-    appointmentDate: string,
+    booking_date: string,
     bookStatus?: string //No need
 }
 
@@ -49,4 +49,38 @@ interface DentistExistence {
     area_id: string,
     area_name: string, 
     area_existence: boolean
+}
+
+
+//temp 
+interface DentistByRole {
+    
+}
+
+interface UserJson {
+    success: boolean,
+    data: UserData
+}
+
+interface UserData {
+    _id: string
+    name: String,
+    tel: String,
+    gender: String,
+    birthdate: Date,
+    email: String,
+    role: String,
+    createdAt: Date,
+    __v: string,
+    bookings: Bookings[],
+    id: string
+}
+
+interface Bookings {
+    _id: string,
+    user: string,
+    dentist: string,
+    booking_date: Date,
+    booking_status: string
+    __v: string
 }
