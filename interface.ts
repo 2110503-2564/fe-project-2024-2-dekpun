@@ -45,16 +45,33 @@ interface MyAppointmentProps {
     session: any;
 }
 
-interface DentistExistence {
+//GET ROLES
+
+interface AllDentistJson {
+    success: string,
+    data: AllDentistData[]
+}
+
+interface AllDentistData {
     area_id: string,
     area_name: string, 
     area_existence: boolean
 }
 
 
-//temp 
-interface DentistByRole {
-    
+//GET ROLE 
+interface DentistByRoleJson {
+    success: string,
+    data: DentistByRoleData[]
+}
+
+interface DentistByRoleData {
+    _id: string,
+    name: string,
+    area_of_expertise: string,
+    year_of_experience: number,
+    clinic_branch: string,
+    id: string
 }
 
 interface UserJson {

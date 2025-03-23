@@ -7,24 +7,43 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useState, useEffect } from "react";
 import getRole from "@/libs/getRole"; // Import backend function
+import getRoles from "@/libs/getRoles";
 import addAppointment from "@/libs/addAppointment";
 import getUserProfile from "@/libs/getUserProfile";
 import { SelectChangeEvent } from "@mui/material";
-import { Alexandria } from "next/font/google";
 
 export default function AppointmentForm({ session }: { session: any }) {
 
-    const [userProfile, setUserProfile] = useState<any>();
-    
-    const token = session?.user?.token
 
+    //State 1
+    const [userProfile, setUserProfile] = useState<any>();
+    const [purposes, setPurposes] = useState<{ area_id: string, area_name: string }[]>([]);
+    const [dentists, setDentists] = useState<{ _id: string, name: string, area_of_expertise: string, year_of_experience: number, clinic_branch: string, id: string }[]>([]);
+    const [showDentistSelection, setShowDentistSelection] = useState(false);
+    
+    //State 2
+    const [formData, setFormData] = useState({
+        nameLastname: "",
+        tel: "",
+        gender: "",
+        purpose: "",
+        dentistId: "",
+        birthday: null as Dayjs | null,
+        appointmentDate: null as Dayjs | null,
+    });
+    
+    //Const value
+    const token = session?.user?.token;
+    const clinic = "Dekpun Clinic";
+
+    //Fetch User Profile
+    //usage: makeAppointment
     useEffect(() => {
         if (token) {
-            // Fetch the user profile
             const fetchUserProfile = async () => {
                 try {
                     const profileData = await getUserProfile(await token);
-                    setUserProfile(profileData.data); // Save the user profile data (including _id)
+                    setUserProfile(profileData.data);
                 } catch (error) {
                     console.error("Failed to fetch user profile:", error);
                 }
@@ -33,47 +52,50 @@ export default function AppointmentForm({ session }: { session: any }) {
         }
     }, [token]);
 
-    const [formData, setFormData] = useState({
-        nameLastname: "",
-        tel: "",
-        gender: "",
-        purpose: "",
-        dentistId: "67de7f690b84b1a7a8455ca4",
-        birthday: null as Dayjs | null,
-        appointmentDate: null as Dayjs | null,
-    });
+    //Fetch All Roles
+    //usage: purpose drowdown content
+    useEffect(() => {
+        const fetchPurposes = async () => {
+            try {
+                const response = await getRoles();
+                const filteredPurposes = response.data.filter((item: any) => item.area_existence).map((item: any) => ({ area_id: item.area_id, area_name: item.area_name }));
+                setPurposes(filteredPurposes);
+            } catch (error) {
+                console.error("Failed to fetch purposes:", error);
+            }
+        };
+        fetchPurposes();
+    }, []);
 
-    const [dentists, setDentists] = useState<{ name: string; area_of_expertise: string; _id: string }[]>([]);
-    const clinic = "Dekpun Clinic";
-
-    // Fetch dentists when purpose changes
+    //Fetch dentists in specific role.
+    //usage: dentist selection menu.
     useEffect(() => {
         const fetchDentists = async () => {
             if (formData.purpose) {
                 const fetchedDentists = await getRole(formData.purpose);
-                setDentists(fetchedDentists);
-                setFormData(prev => ({ ...prev, dentist: "" })); // Reset selected dentist
+                setDentists(fetchedDentists.data);
+                setFormData(prev => ({ ...prev, dentistId: "" }));
+                setShowDentistSelection(true);
             }
         };
         fetchDentists();
     }, [formData.purpose]);
 
+    //Event handler when items is changed
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
         setFormData(prev => ({ ...prev, [field]: e.target.value }));
     };
-    
 
+    //Fetch data to Backend
+    //Make Appointment
+    //usage: POST new Appointment
     const makeAppointment = async () => {
-
-        console.log("token: " + token)
-        console.log("userId: " + userProfile?.id)
-
         if (!formData.nameLastname || !formData.tel || !formData.gender || !formData.purpose || !formData.appointmentDate) {
             alert("Please fill in all fields.");
             return;
         }
         
-        if (token === undefined) {
+        if (!token) {
             alert("User is not authenticated! (token)");
             return;
         }
@@ -88,7 +110,6 @@ export default function AppointmentForm({ session }: { session: any }) {
                 uid: userProfile.id,
                 booking_date: formData.appointmentDate ? formData.appointmentDate.format("YYYY-MM-DD") : "",
             };
-
             await addAppointment(token, formData.dentistId, appointmentData);
             alert("Appointment successfully booked!");
         } catch (error) {
@@ -100,17 +121,21 @@ export default function AppointmentForm({ session }: { session: any }) {
     return (
         <main className="flex flex-col items-center w-full min-h-screen py-10 bg-gray-100">
             <div className="text-4xl font-bold text-blue-800 mb-6">New Appointment</div>
-
             <div className="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg space-y-6">
                 <TextField label="Full Name" fullWidth required value={formData.nameLastname} onChange={(e) => handleInputChange(e, "nameLastname")} />
                 <TextField label="Contact Number" fullWidth required value={formData.tel} onChange={(e) => handleInputChange(e, "tel")} />
-
-                <div className="flex space-x-4">
+                
+                <div className="flex justify-between">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker label="Date of Birth" value={formData.birthday} onChange={(value) => setFormData(prev => ({ ...prev, birthday: value }))} className="w-full bg-white" />
+                        <DatePicker 
+                            label="Birth Date" 
+                            value={formData.birthday} 
+                            onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} 
+                            className="w-[50%] bg-white" 
+                        />
                     </LocalizationProvider>
 
-                    <FormControl fullWidth>
+                    <FormControl className="w-[45%]">
                         <InputLabel>Gender</InputLabel>
                         <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} required>
                             <MenuItem value="Male">Male</MenuItem>
@@ -125,42 +150,29 @@ export default function AppointmentForm({ session }: { session: any }) {
                 <FormControl fullWidth>
                     <InputLabel>Purpose</InputLabel>
                     <Select value={formData.purpose} onChange={(e) => handleInputChange(e, "purpose")} required>
-                        <MenuItem value="Orthodontics">Orthodontics</MenuItem>
-                        <MenuItem value="Prosthodontics">Prosthodontics</MenuItem>
-                        <MenuItem value="Dental implant">Dental implant</MenuItem>
-                        <MenuItem value="Crown">Crown</MenuItem>
-                        <MenuItem value="Root canal treatment">Root canal treatment</MenuItem>
-                        <MenuItem value="Pediatric dentistry">Pediatric dentistry</MenuItem>
-                        <MenuItem value="Dentistry">Dentistry</MenuItem>
-                        <MenuItem value="Veneer">Veneer</MenuItem>
-                        <MenuItem value="Periodontics">Periodontics</MenuItem>
-                        <MenuItem value="Fluoride treatment">Fluoride treatment</MenuItem>
+                        {purposes.map(purpose => (
+                            <MenuItem key={purpose.area_id} value={purpose.area_id}>{purpose.area_name}</MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
 
-                {/* Dentist Selection */}
-                {dentists.length > 0 && (
-                    <div className="w-full">
-                        <TextField label="Dentist" fullWidth required value={formData.dentistId} disabled />
-                        <div className="mt-4 max-h-80 overflow-y-auto border p-2 rounded-lg shadow-inner">
-                            <Grid container spacing={2} direction="column">
-                                {dentists.map((dentistInfo) => (
-                                    <Grid item xs={12} key={dentistInfo._id}>
-                                        <Card variant="outlined">
-                                            <CardContent className="flex justify-between items-center">
-                                                <div>
-                                                        <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
-                                                    <p className="text-gray-600">Expert in {dentistInfo.area_of_expertise}</p>
-                                                </div>
-                                                <Button variant="contained" color="primary" onClick={() => setFormData(prev => ({ ...prev, dentist: dentistInfo._id }))}>
-                                                    Select
-                                                </Button>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </div>
+                {formData.dentistId && (
+                    <TextField label="Selected Dentist" fullWidth required value={dentists.find(d => d._id === formData.dentistId)?.name || ''} onClick={() => setShowDentistSelection(true)} disabled />
+                )}
+
+                {showDentistSelection && (
+                    <div className="w-full max-h-60 overflow-y-auto border p-2 rounded-lg shadow-inner">
+                        {dentists.map(dentistInfo => (
+                            <Card key={dentistInfo._id} variant="outlined" className="flex justify-between items-center p-4">
+                                <div>
+                                    <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
+                                    <p className="text-gray-600">Expert in {dentistInfo.area_of_expertise}</p>
+                                </div>
+                                <Button variant="contained" color="primary" onClick={() => { setFormData(prev => ({ ...prev, dentistId: dentistInfo._id })); setShowDentistSelection(false); }}>
+                                    Select
+                                </Button>
+                            </Card>
+                        ))}
                     </div>
                 )}
 
@@ -168,8 +180,7 @@ export default function AppointmentForm({ session }: { session: any }) {
                     <DatePicker label="Appointment Date" value={formData.appointmentDate} onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} className="w-full bg-white" />
                 </LocalizationProvider>
 
-                <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" 
-                  onClick={makeAppointment}>
+                <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" onClick={makeAppointment}>
                     Confirm Appointment
                 </button>
             </div>
