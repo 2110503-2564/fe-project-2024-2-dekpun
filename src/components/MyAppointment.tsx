@@ -1,40 +1,48 @@
 "use client"  // Ensure this is a Client Component
 
-import { useAppSelector } from "@/redux/store";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { useState } from "react";
 import { Card, CardContent, Button } from "@mui/material";
 import deleteAppointment from "@/libs/deleteAppointment";
-import { useSession } from "next-auth/react";
+
 
 // Type definition for the props
 
 export default function MyAppointment({ appointmentsJson, session }: MyAppointmentProps) {
 
-    // const { data: session } = useSession();
-    // const dispatch = useDispatch<AppDispatch>();
-    // const userItems = useAppSelector((state) => state.appointmentSlice.appointmentItems);
-
     const token = session?.user.token
     const uid = session?.user._id
+
+    const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
 
     // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
         return <p>No appointments available.</p>;  
     }
 
-    console.log("uid: " + uid)
-    console.log("token: " + token)
-    console.log(appointmentsJson)
+    const handleDelete = async (appointmentId: string) => {
+        try {
+            const success = await deleteAppointment(appointmentId, token);
+            if (success) {
+                setAppointments((prev) => prev.filter((item) => item._id !== appointmentId));
+                alert("Remove Appointment successfully!.");
+            } else {
+                alert("Failed to delete appointment.");
+            }
+        } catch (error) {
+            console.error("Error deleting appointment:", error);
+            alert("An error occurred while deleting the appointment.");
+        }
+    };
+
 
     return (
         <main className="w-full flex flex-col items-center space-y-6 p-6">
             <h1 className="text-3xl font-bold text-blue-800">My Appointments</h1>
 
-            {appointmentsJson.data.length === 0 ? (
+            {appointments.length === 0 ? (
                 <p className="text-gray-500">No upcoming appointments.</p>
             ) : (
-                appointmentsJson.data.map((appointmentItem) => (
+                appointments.map((appointmentItem) => (
                     <Card key={appointmentItem._id} className="w-[90%] md:w-[60%] shadow-lg">
                         <CardContent className="p-6 flex flex-col space-y-4">
                             <div className="text-xl font-semibold text-gray-800">
@@ -67,8 +75,8 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
                                 <Button 
                                     variant="outlined"  
                                     color="error"
-                                    onClick={() => deleteAppointment(appointmentItem._id, token)}>
-                                    Cancel 
+                                    onClick={() => handleDelete(appointmentItem._id)}>
+                                    Remove
                                 </Button>
                             </div>
                         </CardContent>

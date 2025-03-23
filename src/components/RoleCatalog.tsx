@@ -25,9 +25,9 @@ export default async function RoleCatalog() {
     ];
 
     // Fetch dentists
-    const areas:DentistExistence[] = (await getRoles()).data;
+    const areas:AllDentistData[] = (await getRoles()).data;
 
-    const areaArray = areas.map( (area:DentistExistence) => {
+    const areaArray = areas.map( (area:AllDentistData) => {
         let match = AreaOfExpertiseList.find( (item) => item.area_name === area.area_name );
         match = match ? match : { area_name: "", area_id: "", image: "" };
         return {...match, ...area};
