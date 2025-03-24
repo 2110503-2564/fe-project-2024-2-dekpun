@@ -35,10 +35,13 @@ export default async function DentistCatalog( { role } : { role:string } ) {
                 Explore Our Dentist in "{ areaName }" area
             </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-6xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
                 {
                     dentists.map((dentist:DentistJson) => (
-                        <DentistCard dentistName={dentist.name} imgSrc={"/img/member/TJ.jpg"} />
+                        <DentistCard 
+                          dentist={ dentist } 
+                          area_id={ area ? area.area_id : "Not Found" } 
+                          imgSrc={"/img/member/TJ.jpg"} />
                     ))
                 }
             </div>

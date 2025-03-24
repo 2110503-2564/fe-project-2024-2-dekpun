@@ -24,12 +24,12 @@ interface UserJson {
 }
 
 interface DentistJson {
-    id: string,
+    _id: string,
     name: string, 
     area_of_expertise: string,
     year_of_experience: number,
     clinic_branch: string,
-    _id: string
+    id: string
 }
 
 //POST BOOKING (dentists/{:did}/bookings)

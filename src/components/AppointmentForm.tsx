@@ -11,9 +11,9 @@ import getRoles from "@/libs/getRoles";
 import addAppointment from "@/libs/addAppointment";
 import getUserProfile from "@/libs/getUserProfile";
 import { SelectChangeEvent } from "@mui/material";
+import { useSearchParams } from "next/navigation";
 
-export default function AppointmentForm({ session }: { session: any }) {
-
+export default function AppointmentForm({ session, dentist }: { session: any, dentist?:DentistJson }) {
 
     //State 1
     const [userProfile, setUserProfile] = useState<any>();
@@ -86,6 +86,16 @@ export default function AppointmentForm({ session }: { session: any }) {
         setFormData(prev => ({ ...prev, [field]: e.target.value }));
     };
 
+    useEffect(() => {
+        if (dentist) {
+            setFormData(prev => ({
+                ...prev,
+                dentistId: dentist._id,
+                purpose: dentist.area_of_expertise,
+            }));
+        }
+    }, [dentist]);
+
     //Fetch data to Backend
     //Make Appointment
     //usage: POST new Appointment
@@ -118,13 +128,15 @@ export default function AppointmentForm({ session }: { session: any }) {
         }
     };
 
+    console.log(dentist)
+
     return (
         <main className="flex flex-col items-center w-full min-h-screen py-10 bg-gray-100">
             <div className="text-4xl font-bold text-blue-800 mb-6">New Appointment</div>
             <div className="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg space-y-6">
                 <TextField label="Full Name" fullWidth required value={formData.nameLastname} onChange={(e) => handleInputChange(e, "nameLastname")} />
                 <TextField label="Contact Number" fullWidth required value={formData.tel} onChange={(e) => handleInputChange(e, "tel")} />
-                
+
                 <div className="flex justify-between">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker 
@@ -166,7 +178,7 @@ export default function AppointmentForm({ session }: { session: any }) {
                             <Card key={dentistInfo._id} variant="outlined" className="flex justify-between items-center p-4">
                                 <div>
                                     <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
-                                    <p className="text-gray-600">Expert in {dentistInfo.area_of_expertise}</p>
+                                    <p className="text-gray-600">Year of Experience: {dentistInfo.year_of_experience}</p>
                                 </div>
                                 <Button variant="contained" color="primary" onClick={() => { setFormData(prev => ({ ...prev, dentistId: dentistInfo._id })); setShowDentistSelection(false); }}>
                                     Select

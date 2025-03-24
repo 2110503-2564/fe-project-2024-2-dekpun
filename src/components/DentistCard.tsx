@@ -1,20 +1,46 @@
+'use client'
+
 import Image from "next/image";
 import InteractiveCard from "./InteractiveCard";
+import { useRouter } from "next/navigation";
 
-export default function DentistCard( { dentistName, imgSrc, onCompare }: { dentistName: string; imgSrc: string; onCompare?: Function } ) {
+export default function DentistCard( { dentist, imgSrc, area_id, onCompare }: { dentist: DentistJson; imgSrc: string; area_id: string, onCompare?: Function } ) {
+
+    const router = useRouter();
+    const makeApptWithDentHandler = () => {
+        const queryString = new URLSearchParams({
+            _id: dentist._id,
+            name: dentist.name,
+            area_of_expertise: dentist.area_of_expertise,
+            year_of_experience: dentist.year_of_experience.toString(),
+            clinic_branch: dentist.clinic_branch,
+            id: dentist.id
+        }).toString();   
+        router.push(`../../../appointment?${queryString}`)
+    }
+
     return (
-        <InteractiveCard contentName={ dentistName }>
-            <div className="relative w-full h-[220px] rounded-t-lg overflow-hidden">
+        <InteractiveCard contentName={ dentist.name }>
+            <div className="relative w-full h-[220px] rounded-t-lg overflow-hidden group"
+              onClick={makeApptWithDentHandler}>
+                {/* Image */}
                 <Image
-                    src={ imgSrc }
-                    alt={ dentistName }
+                    src={imgSrc}
+                    alt={dentist.name}
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-t-lg transition-transform duration-500 hover:scale-110"
+                    className="rounded-t-lg transition-transform duration-500 group-hover:scale-110 group-hover:opacity-40"
                 />
+                
+                {/* Overlay Text */}
+                <h1 className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-black/50">
+                    Click to make an Appointment.
+                </h1>
             </div>
-            <div className="p-4 text-center text-xl font-semibold text-gray-900 bg-white/70 backdrop-blur-md rounded-b-lg">
-                { dentistName }
+
+            <div className="p-4 text-center bg-white/70 backdrop-blur-md rounded-b-lg">
+                <h1 className="text-xl font-semibold text-gray-900"> {dentist.name} </h1>
+                <p className="text-md text-gray-500">Year of Experience: {dentist.year_of_experience} </p>
             </div>
 
             {
@@ -25,7 +51,7 @@ export default function DentistCard( { dentistName, imgSrc, onCompare }: { denti
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                onCompare(dentistName);
+                                onCompare(dentist.name);
                             }}
                         >
                             Compare
