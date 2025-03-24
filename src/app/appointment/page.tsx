@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import AppointmentForm from "@/components/AppointmentForm";
+import test from "@/components/test";
 
 export default async function AppointmentPage({ searchParams }: { searchParams: { [key: string]: string } }) {
     
@@ -16,6 +17,12 @@ export default async function AppointmentPage({ searchParams }: { searchParams: 
     };
 
     return(
-        <AppointmentForm session={session} dentist={dentist}/>
+        <>
+            {Object.keys(searchParams).length === 0 ? (
+                <AppointmentForm session={session} />
+            ) : (
+                <AppointmentForm session={session} dentist={dentist} />
+            )}
+        </>
     )
 }

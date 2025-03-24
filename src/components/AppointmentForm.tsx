@@ -72,16 +72,16 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
     //Fetch dentists in specific role.
     //usage: dentist selection menu.
     useEffect(() => {
-        const fetchDentists = async () => {
-            if (formData.purpose && !dentist) {
+        if (!dentist) { // Only fetch if no dentist is pre-selected
+            const fetchDentists = async () => {
                 const fetchedDentists = await getRole(formData.purpose);
                 setDentists(fetchedDentists.data);
-                // setFormData(prev => ({ ...prev, dentistId: "" }));
                 setShowDentistSelection(true);
-            }
-        };
-        fetchDentists();
-    }, [formData.purpose, dentist]);
+            };
+            fetchDentists();
+        }
+    }, [formData.purpose]);
+    
 
     //Event handler when items is changed
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
@@ -94,9 +94,9 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
             setShowDentistSelection(false)
             setFormData(prev => ({
                 ...prev,
-                dentistId: dentist._id,
-                dentistName: dentist.name,
-                purpose: roleJson.area_id,
+                dentistId: dentist._id || "",
+                dentistName: dentist.name || "Unknown",
+                purpose: roleJson?.area_id || "",
             }));
         }
     }, [dentist]);
@@ -174,7 +174,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 </FormControl>
 
                 {formData.dentistId && (
-                    <TextField label="Selected Dentist" fullWidth required value={formData.dentistName} onClick={() => setShowDentistSelection(true)} disabled />
+                    <TextField label="Selected Dentist" fullWidth required value={dentists.find(d => d._id === formData.dentistId)?.name || ''}  onClick={() => setShowDentistSelection(true)} disabled />
                 )}
 
                 {showDentistSelection && (
