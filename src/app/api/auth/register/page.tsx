@@ -2,6 +2,7 @@
 import userRegister from "@/libs/userRegister";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function Register() {
     const router = useRouter();
@@ -82,8 +83,14 @@ export default function Register() {
             });
             setConfirmPassword("");
 
-            alert("You are now registered!");
-            router.push("/api/auth/login");
+            Swal.fire({
+                title: "You are now registered!",
+                icon: "success",
+                draggable: true
+            }).then( () => {
+                router.push("/api/auth/login");
+            });
+
         } catch (error) {
             console.log(error);
             setErrors({ server: "Failed to register. Please try again." });

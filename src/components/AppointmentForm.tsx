@@ -11,10 +11,10 @@ import getRoles from "@/libs/getRoles";
 import addAppointment from "@/libs/addAppointment";
 import getUserProfile from "@/libs/getUserProfile";
 import { SelectChangeEvent } from "@mui/material";
-import { useSearchParams } from "next/navigation";
 import getIdbyRole from "@/libs/getIdbyRole";
 import editAppointment from "@/libs/editAppointment";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function AppointmentForm({ session, option, booking_id, dentist }: { session: any, option:string, booking_id:string, dentist?:DentistJson}) {
 
@@ -135,7 +135,15 @@ export default function AppointmentForm({ session, option, booking_id, dentist }
                 };
 
                 await editAppointment(token, booking_id, appointmentData);
-                alert("Edit Appointment successfully!");
+
+                Swal.fire({
+                    title: "Edit Appointment successfully!",
+                    icon: "success",
+                    draggable: true
+                }).then( () => {
+                    router.push("/appointmentlist")
+                });
+
             } else {
 
                 const appointmentData = {
@@ -144,14 +152,23 @@ export default function AppointmentForm({ session, option, booking_id, dentist }
                 };
 
                 await addAppointment(token, formData.dentistId, appointmentData);
-                alert("Appointment successfully booked!");
-            }
 
-            new Promise(resolve => setTimeout(resolve, 1500))
-            router.push("/appointmentlist")
+                Swal.fire({
+                    title: "Appointment successfully booked!",
+                    icon: "success",
+                    draggable: true
+                }).then( () => {
+                    router.push("/appointmentlist")
+                });
+            }
         } catch (error) {
             console.error("Error booking appointment:", error);
-            alert("Failed to book appointment.");
+
+            Swal.fire({
+                title: "Failed to book appointment.",
+                icon: "error",
+                draggable: true
+            });
         }
     };
 
@@ -220,8 +237,22 @@ export default function AppointmentForm({ session, option, booking_id, dentist }
                 </LocalizationProvider>
     
                 <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" 
-                  onClick={() => makeAppointment(option)}>
-                    {option === "edit" ? "Edit Appointment" : "Confirm Appointment"}
+                  onClick={() => {
+                    Swal.fire({
+                        title: "Do you want to save this appointment?",
+                        icon: "warning",
+                        draggable: true,
+                        showCancelButton: true,
+                        confirmButtonColor: "#155dfc",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Save!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            makeAppointment(option);
+                        }
+                    });
+                  }}>
+                    { option === "edit" ? "Edit Appointment" : "Confirm Appointment" }
                 </button>
             </div>
         </main>
