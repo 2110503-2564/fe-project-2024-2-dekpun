@@ -69,13 +69,14 @@ export default function SignIn() {
                 </div>
 
                 {/* Login Button */}
+                <div className="flex justify-center items-center">
                 {
                     providers ?
                         Object.values(providers).map((provider: any) => (
                             <button
                                 key={provider.id}
                                 onClick={() => handleSignIn(provider.id)}
-                                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+                                className="w-[50%] bg-[#33ff24] text-black py-2 px-4 rounded-xl border border-black hover:bg-[#22963D] hover:text-white transition"
                             >
                                 Login
                             </button>
@@ -83,6 +84,8 @@ export default function SignIn() {
                     :
                         <></>
                 }
+                </div>
+                
 
                 <p className="pt-5 text-center text-blue-600">
                     Don't have an account? <Link href={"/api/auth/register"} className="underline hover:text-blue-900 transition">Register Here!</Link>
