@@ -20,7 +20,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
     const [userProfile, setUserProfile] = useState<any>();
     const [purposes, setPurposes] = useState<{ area_id: string, area_name: string }[]>([]);
     const [dentists, setDentists] = useState<{ _id: string, name: string, area_of_expertise: string, year_of_experience: number, clinic_branch: string, id: string }[]>([]);
-    const [showDentistSelection, setShowDentistSelection] = useState(false);
+    // const [showDentistSelection, setShowDentistSelection] = useState(false);
     
     //State 2
     const [formData, setFormData] = useState({
@@ -69,29 +69,10 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         fetchPurposes();
     }, []);
 
-    //Fetch dentists in specific role.
-    //usage: dentist selection menu.
-    useEffect(() => {
-        if (!dentist) { // Only fetch if no dentist is pre-selected
-            const fetchDentists = async () => {
-                const fetchedDentists = await getRole(formData.purpose);
-                setDentists(fetchedDentists.data);
-                setShowDentistSelection(true);
-            };
-            fetchDentists();
-        }
-    }, [formData.purpose]);
-    
-
-    //Event handler when items is changed
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
-        setFormData(prev => ({ ...prev, [field]: e.target.value }));
-    };
-
     useEffect(() => {
         if (dentist) {
             const roleJson = getIdbyRole(dentist.area_of_expertise)
-            setShowDentistSelection(false)
+            // setShowDentistSelection(false)
             setFormData(prev => ({
                 ...prev,
                 dentistId: dentist._id || "",
@@ -100,6 +81,25 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
             }));
         }
     }, [dentist]);
+
+    //Fetch dentists in specific role.
+    //usage: dentist selection menu.
+    useEffect(() => {
+        console.log(formData.purpose)
+            const fetchDentists = async () => {
+                const fetchedDentists = await getRole(formData.purpose);
+                setDentists(fetchedDentists.data);
+                // setShowDentistSelection(true);
+            };
+            fetchDentists();
+    }, [formData.purpose]);
+    
+
+    //Event handler when items is changed
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
+        setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    };
+
 
     //Fetch data to Backend
     //Make Appointment
@@ -174,24 +174,22 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 </FormControl>
 
                 {formData.dentistId && (
-                    <TextField label="Selected Dentist" fullWidth required value={dentists.find(d => d._id === formData.dentistId)?.name || ''}  onClick={() => setShowDentistSelection(true)} disabled />
+                    <TextField label="Selected Dentist" fullWidth required value={dentists.find(d => d._id === formData.dentistId)?.name || ''}  disabled />
                 )}
 
-                {showDentistSelection && (
-                    <div className="w-full max-h-60 overflow-y-auto border p-2 rounded-lg shadow-inner">
-                        {dentists.map(dentistInfo => (
-                            <Card key={dentistInfo._id} variant="outlined" className="flex justify-between items-center p-4">
-                                <div>
-                                    <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
-                                    <p className="text-gray-600">Year of Experience: {dentistInfo.year_of_experience}</p>
-                                </div>
-                                <Button variant="contained" color="primary" onClick={() => { setFormData(prev => ({ ...prev, dentistId: dentistInfo._id })); setShowDentistSelection(false); }}>
-                                    Select
-                                </Button>
-                            </Card>
-                        ))}
-                    </div>
-                )}
+                <div className="w-full max-h-60 overflow-y-auto border p-2 rounded-lg shadow-inner">
+                    {dentists.map(dentistInfo => (
+                        <Card key={dentistInfo._id} variant="outlined" className="flex justify-between items-center p-4">
+                            <div>
+                                <h3 className="text-lg font-semibold">{dentistInfo.name}</h3>
+                                <p className="text-gray-600">Year of Experience: {dentistInfo.year_of_experience}</p>
+                            </div>
+                            <Button variant="contained" color="primary" onClick={() => { setFormData(prev => ({ ...prev, dentistId: dentistInfo._id })); }}>
+                                Select
+                            </Button>
+                        </Card>
+                    ))}
+                </div>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker label="Appointment Date" value={formData.appointmentDate} onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} className="w-full bg-white" />
