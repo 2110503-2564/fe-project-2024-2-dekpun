@@ -22,7 +22,7 @@ export default async function TopMenu() {
                 <TopMenuItem title='My Appointment' pageRef='/appointmentlist'/>
                 {
                     session ?
-                        <Link href="/api/auth/signout">
+                        <Link href="/api/auth/logout">
                             <div className='flex items-center h-full px-2 text-cyan-600 text-sm ml-5'>
                                 <Image src={'/img/profile_user.png'} className='h-[40px] w-[40px]' alt='user profile' width={0} height={0} sizes='auto'/>
                             </div>
