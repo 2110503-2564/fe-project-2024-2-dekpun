@@ -12,6 +12,7 @@ import addAppointment from "@/libs/addAppointment";
 import getUserProfile from "@/libs/getUserProfile";
 import { SelectChangeEvent } from "@mui/material";
 import { useSearchParams } from "next/navigation";
+import getIdbyRole from "@/libs/getIdbyRole";
 
 export default function AppointmentForm({ session, dentist }: { session: any, dentist?:DentistJson }) {
 
@@ -28,6 +29,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         gender: "",
         purpose: "",
         dentistId: "",
+        dentistName: "",
         birthday: null as Dayjs | null,
         appointmentDate: null as Dayjs | null,
     });
@@ -71,15 +73,15 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
     //usage: dentist selection menu.
     useEffect(() => {
         const fetchDentists = async () => {
-            if (formData.purpose) {
+            if (formData.purpose && !dentist) {
                 const fetchedDentists = await getRole(formData.purpose);
                 setDentists(fetchedDentists.data);
-                setFormData(prev => ({ ...prev, dentistId: "" }));
+                // setFormData(prev => ({ ...prev, dentistId: "" }));
                 setShowDentistSelection(true);
             }
         };
         fetchDentists();
-    }, [formData.purpose]);
+    }, [formData.purpose, dentist]);
 
     //Event handler when items is changed
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
@@ -88,10 +90,13 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
 
     useEffect(() => {
         if (dentist) {
+            const roleJson = getIdbyRole(dentist.area_of_expertise)
+            setShowDentistSelection(false)
             setFormData(prev => ({
                 ...prev,
                 dentistId: dentist._id,
-                purpose: dentist.area_of_expertise,
+                dentistName: dentist.name,
+                purpose: roleJson.area_id,
             }));
         }
     }, [dentist]);
@@ -169,7 +174,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 </FormControl>
 
                 {formData.dentistId && (
-                    <TextField label="Selected Dentist" fullWidth required value={dentists.find(d => d._id === formData.dentistId)?.name || ''} onClick={() => setShowDentistSelection(true)} disabled />
+                    <TextField label="Selected Dentist" fullWidth required value={formData.dentistName} onClick={() => setShowDentistSelection(true)} disabled />
                 )}
 
                 {showDentistSelection && (
