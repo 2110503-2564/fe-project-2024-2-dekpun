@@ -19,9 +19,9 @@ export default async function AppointmentPage({ searchParams }: { searchParams: 
     return(
         <>
             {Object.keys(searchParams).length === 0 ? (
-                <AppointmentForm session={session} />
+                <AppointmentForm session={session} option="create" booking_id=""/>
             ) : (
-                <AppointmentForm session={session} dentist={dentist} />
+                <AppointmentForm session={session} option="create" booking_id="" dentist={dentist} />
             )}
         </>
     )

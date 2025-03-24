@@ -39,6 +39,13 @@ interface AppointmentItem {
     bookStatus?: string //No need
 }
 
+//PUT BOOKING (bookings/{:bid})
+interface AppointmentItemUpdate {
+    booking_date: string,
+    dentist: string,
+    bookStatus?: string //No need
+}
+
 
 interface MyAppointmentProps {
     appointmentsJson: AppointmentJson | null;

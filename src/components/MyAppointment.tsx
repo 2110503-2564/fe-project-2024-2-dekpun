@@ -4,21 +4,46 @@ import { useState } from "react";
 import { Card, CardContent, Button } from "@mui/material";
 import deleteAppointment from "@/libs/deleteAppointment";
 import updateAppointment from "@/libs/updateAppointment";
-
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import getAppointments from "@/libs/getAppointments";
+import Link from "next/link";
 
 // Type definition for the props
 
 export default function MyAppointment({ appointmentsJson, session }: MyAppointmentProps) {
 
+    const router = useRouter();
     const token = session?.user.token
     const uid = session?.user._id
 
     const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
-    const [status, setStatus] = useState("booked");
+
+    useEffect(() => {
+            const fetchAppointment = async () => {
+                try {
+                    const profileData = await getAppointments(await token);
+                    setAppointments(profileData.data)
+                    
+                } catch (error) {
+                    console.error("Failed to fetch user profile:", error);
+                }
+            };
+            fetchAppointment;
+    }, [appointments]);
 
     // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
         return <p>No appointments available.</p>;  
+    }
+
+    const handleEditStatus = (appointmentId: string, status: string) => {
+        if(appointments) {
+            const queryString = new URLSearchParams({
+                booking_id: appointmentId
+            }).toString();   
+            router.push(`../../appointment/manage?${queryString}`)
+        }
     }
 
     const handleUpdateStatus = async (appointmentsId: string, status: string) => {
@@ -55,7 +80,6 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
         }
     };
 
-
     return (
         <main className="w-full flex flex-col items-center space-y-6 p-6">
             <h1 className="text-3xl font-bold text-blue-800">My Appointments</h1>
@@ -88,9 +112,9 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
 
                             <div className="flex justify-end space-x-3">
                                 <Button 
-                                    variant="contained" 
+                                    variant="outlined"  
                                     color="primary"
-                                    onClick={() => alert("Edit feature coming soon!")}>
+                                    onClick={() => handleEditStatus(appointmentItem._id, "canceled")}>
                                     Edit
                                 </Button>
                             { 

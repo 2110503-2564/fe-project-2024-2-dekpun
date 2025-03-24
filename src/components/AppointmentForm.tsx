@@ -13,20 +13,23 @@ import getUserProfile from "@/libs/getUserProfile";
 import { SelectChangeEvent } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import getIdbyRole from "@/libs/getIdbyRole";
+import editAppointment from "@/libs/editAppointment";
+import { useRouter } from "next/navigation";
 
-export default function AppointmentForm({ session, dentist }: { session: any, dentist?:DentistJson }) {
+export default function AppointmentForm({ session, option, booking_id, dentist }: { session: any, option:string, booking_id:string, dentist?:DentistJson}) {
+
+    const router = useRouter();
 
     //State 1
-    const [userProfile, setUserProfile] = useState<any>();
+    const [userProfile, setUserProfile] = useState<UserData>();
     const [purposes, setPurposes] = useState<{ area_id: string, area_name: string }[]>([]);
     const [dentists, setDentists] = useState<{ _id: string, name: string, area_of_expertise: string, year_of_experience: number, clinic_branch: string, id: string }[]>([]);
-    // const [showDentistSelection, setShowDentistSelection] = useState(false);
     
     //State 2
     const [formData, setFormData] = useState({
-        nameLastname: "",
-        tel: "",
-        gender: "",
+        nameLastname: userProfile?.name || "",
+        tel: userProfile?.tel || "",
+        gender: userProfile?.gender || "",
         purpose: getIdbyRole(dentist?.area_of_expertise || "")?.area_id || "",
         dentistId: dentist?._id || "",
         dentistName: dentist?.name || "",
@@ -37,7 +40,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
     //Const value
     const token = session?.user?.token;
     const clinic = "Dekpun Clinic";
-
+    
     //Fetch User Profile
     //usage: makeAppointment
     useEffect(() => {
@@ -46,7 +49,6 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 try {
                     const profileData = await getUserProfile(await token);
                     setUserProfile(profileData.data);
-                    // setFormData(prev => ({ ...prev, nameLastname: userProfile.name }));
                     
                 } catch (error) {
                     console.error("Failed to fetch user profile:", error);
@@ -55,6 +57,18 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
             fetchUserProfile();
         }
     }, [token]);
+
+    useEffect(() => {
+        if (userProfile) {
+            setFormData((prev) => ({
+                ...prev,
+                nameLastname: userProfile.name || "",
+                tel: userProfile.tel || "",
+                gender: userProfile.gender || "",
+                birthday: userProfile.birthdate ? dayjs(userProfile.birthdate) : null,
+            }));
+        }
+    }, [userProfile]);
 
     //Fetch All Roles
     //usage: purpose drowdown content
@@ -85,15 +99,15 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
     
 
     //Event handler when items is changed
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>, field: string) => {
-        setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<String>, field: string) => {
+        setFormData(prev => ({ ...prev, [field]: e.target.value as string }));
     };
-
+ 
 
     //Fetch data to Backend
     //Make Appointment
     //usage: POST new Appointment
-    const makeAppointment = async () => {
+    const makeAppointment = async (option:string) => {
         if (!formData.nameLastname || !formData.tel || !formData.gender || !formData.purpose || !formData.appointmentDate) {
             alert("Please fill in all fields.");
             return;
@@ -110,12 +124,31 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         }
 
         try {
-            const appointmentData = {
-                uid: userProfile.id,
-                booking_date: formData.appointmentDate ? formData.appointmentDate.format("YYYY-MM-DD") : "",
-            };
-            await addAppointment(token, formData.dentistId, appointmentData);
-            alert("Appointment successfully booked!");
+
+            if(option === "edit"){
+
+                console.log(formData.dentistId)
+
+                const appointmentData = {
+                    booking_date: formData.appointmentDate ? formData.appointmentDate.format("YYYY-MM-DD") : "",
+                    dentist: formData.dentistId,
+                };
+
+                await editAppointment(token, booking_id, appointmentData);
+                alert("Edit Appointment successfully!");
+            } else {
+
+                const appointmentData = {
+                    uid: userProfile.id,
+                    booking_date: formData.appointmentDate ? formData.appointmentDate.format("YYYY-MM-DD") : "",
+                };
+
+                await addAppointment(token, formData.dentistId, appointmentData);
+                alert("Appointment successfully booked!");
+            }
+
+            new Promise(resolve => setTimeout(resolve, 1500))
+            router.push("/appointmentlist")
         } catch (error) {
             console.error("Error booking appointment:", error);
             alert("Failed to book appointment.");
@@ -128,8 +161,9 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         <main className="flex flex-col items-center w-full min-h-screen py-10 bg-gray-100">
             <div className="text-4xl font-bold text-blue-800 mb-6">New Appointment</div>
             <div className="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg space-y-6">
-                <TextField label="Full Name" fullWidth required value={formData.nameLastname} onChange={(e) => handleInputChange(e, "nameLastname")} />
-                <TextField label="Contact Number" fullWidth required value={formData.tel} onChange={(e) => handleInputChange(e, "tel")} />
+
+                <TextField label="Full Name" fullWidth required value={formData.nameLastname} onChange={(e) => handleInputChange(e, "nameLastname")} disabled/>
+                <TextField label="Contact Number" fullWidth required value={formData.tel} onChange={(e) => handleInputChange(e, "tel")} disabled/>
 
                 <div className="flex justify-between">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -138,12 +172,13 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                             value={formData.birthday} 
                             onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} 
                             className="w-[50%] bg-white" 
+                            disabled
                         />
                     </LocalizationProvider>
 
                     <FormControl className="w-[45%]">
                         <InputLabel>Gender</InputLabel>
-                        <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} label="Gender" required>
+                        <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} label="Gender" required disabled>
                             <MenuItem value="Male">Male</MenuItem>
                             <MenuItem value="Female">Female</MenuItem>
                             <MenuItem value="Unidentified">Unidentified</MenuItem>
@@ -183,9 +218,10 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker label="Appointment Date" value={formData.appointmentDate} onChange={(value) => setFormData(prev => ({ ...prev, appointmentDate: value }))} className="w-full bg-white" />
                 </LocalizationProvider>
-
-                <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" onClick={makeAppointment}>
-                    Confirm Appointment
+    
+                <button className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300" 
+                  onClick={() => makeAppointment(option)}>
+                    {option === "edit" ? "Edit Appointment" : "Confirm Appointment"}
                 </button>
             </div>
         </main>
