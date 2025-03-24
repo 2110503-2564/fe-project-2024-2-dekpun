@@ -1,24 +1,25 @@
 import { BACKEND_URL } from "@/backend-config";
 
-export default async function getRole( id:string, page?:number, limit?:number ) {
+export default async function getRole( role:string, page?:number, limit?:number, searchQuery?:string ) {
 
-    if (!page || !limit) {
-        const response = await fetch(`${BACKEND_URL}/api/v1/roles/${id}`, { next: {tags:['role']} });
-        
-        if (!response.ok) {
-            throw new Error(`Failed to fetch role: ${id}`);
-        }
-    
-        return await response.json();
-    } else {
-        const response = await fetch(`${BACKEND_URL}/api/v1/roles/${id}?page=${page}&limit=${limit}`, { next: {tags:['role']} });
-        
-        if (!response.ok) {
-            throw new Error(`Failed to fetch role: ${id} with page number: ${page} (${limit} dentists per page)`);
-        }
-    
-        return await response.json();
+    let queryString;
+
+    queryString = new URLSearchParams({
+        page: page?.toString() || "",
+        limit: limit?.toString() || "",
+        search: searchQuery || "", // Include search query
+    }).toString()
+
+    const response = await fetch(`${BACKEND_URL}/api/v1/roles/${role}?${queryString}`);
+
+    if (!response.ok) {
+        throw new Error(
+            (!page && !limit) ?
+                `Failed to fetch role: ${role}`
+            :
+                `Failed to fetch role: ${role} with page number: ${page} (${limit} dentists per page)`
+        );
     }
 
-
+    return await response.json();
 };
