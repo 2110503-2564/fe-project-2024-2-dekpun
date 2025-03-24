@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, Button } from "@mui/material";
 import deleteAppointment from "@/libs/deleteAppointment";
+import updateAppointment from "@/libs/updateAppointment";
 
 
 // Type definition for the props
@@ -13,10 +14,30 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
     const uid = session?.user._id
 
     const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
+    const [status, setStatus] = useState("booked");
 
     // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
         return <p>No appointments available.</p>;  
+    }
+
+    const handleUpdateStatus = async (appointmentsId: string, status: string) => {
+        try {
+            const success = await updateAppointment(appointmentsId, status, token)
+            if (success) {
+                alert(status + " Appointment successfully!.");
+                setAppointments((prevAppointments) =>
+                    prevAppointments.map((item) =>
+                        item._id === appointmentsId ? { ...item, booking_status: status } : item
+                    )
+                );
+            } else {
+                alert("Failed to " + status + " appointment.");
+            }
+        } catch (error) {
+            console.error("Error deleting appointment:", error);
+            alert("An error occurred while " + status + " the appointment.");
+        }
     }
 
     const handleDelete = async (appointmentId: string) => {
@@ -72,6 +93,16 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
                                     onClick={() => alert("Edit feature coming soon!")}>
                                     Edit
                                 </Button>
+                            { 
+                                appointmentItem.booking_status !== "canceled" && (
+                                <Button 
+                                    variant="outlined"  
+                                    color="error"
+                                    onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}>
+                                    Cancel Booking
+                                </Button>
+                                )
+                            }
                                 <Button 
                                     variant="outlined"  
                                     color="error"
