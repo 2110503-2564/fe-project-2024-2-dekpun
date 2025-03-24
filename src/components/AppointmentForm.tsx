@@ -27,9 +27,9 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         nameLastname: "",
         tel: "",
         gender: "",
-        purpose: "",
-        dentistId: "",
-        dentistName: "",
+        purpose: getIdbyRole(dentist?.area_of_expertise || "")?.area_id || "",
+        dentistId: dentist?._id || "",
+        dentistName: dentist?.name || "",
         birthday: null as Dayjs | null,
         appointmentDate: null as Dayjs | null,
     });
@@ -46,6 +46,8 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
                 try {
                     const profileData = await getUserProfile(await token);
                     setUserProfile(profileData.data);
+                    // setFormData(prev => ({ ...prev, nameLastname: userProfile.name }));
+                    
                 } catch (error) {
                     console.error("Failed to fetch user profile:", error);
                 }
@@ -68,19 +70,6 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
         };
         fetchPurposes();
     }, []);
-
-    useEffect(() => {
-        if (dentist) {
-            const roleJson = getIdbyRole(dentist.area_of_expertise)
-            // setShowDentistSelection(false)
-            setFormData(prev => ({
-                ...prev,
-                dentistId: dentist._id || "",
-                dentistName: dentist.name || "Unknown",
-                purpose: roleJson?.area_id || "",
-            }));
-        }
-    }, [dentist]);
 
     //Fetch dentists in specific role.
     //usage: dentist selection menu.
