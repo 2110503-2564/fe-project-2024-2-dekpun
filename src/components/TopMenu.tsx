@@ -37,7 +37,7 @@ export default function TopMenu( {session, token} : {session?: any, token?: stri
             <TopMenuItem title='Appointment' pageRef='/appointment' />
             <TopMenuItem title='About Us' pageRef='/about' />
 
-            <div className='flex flex-row absolute right-5 h-full'>
+            <div className='flex flex-row absolute items-center right-5 h-full'>
                 {
                     session ? (
                         <>
