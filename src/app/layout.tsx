@@ -21,13 +21,14 @@ export default async function RootLayout({
 }>) {
 
   const session = await getServerSession(authOptions);
+  const token = session?.user.token
 
   return (
     <html lang="en">
       <body className={`${inter.className} m-0 p-0 bg-slate-100`}>
         <ReduxProvider>
           <NextAuthProvider session={session}>
-            <TopMenu/>
+            <TopMenu session={session} token={token} />
             <div className="w-full h-[20px] bg-blue-800 mt-[70px] rounded-b-lg"></div>
             {children}
           </NextAuthProvider>

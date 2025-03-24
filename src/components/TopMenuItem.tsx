@@ -8,7 +8,7 @@ export default function TopMenuItem( { title, pageRef, subPage } : { title:strin
 
     return(
         <div
-            className="relative text-center flex px-5"
+            className="h-[80%] relative text-center flex px-5 rounded-md hover:bg-slate-200 transition duration-200 ease-in-out cursor-pointer "
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
