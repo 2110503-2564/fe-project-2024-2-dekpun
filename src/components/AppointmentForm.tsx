@@ -154,7 +154,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
 
                     <FormControl className="w-[45%]">
                         <InputLabel>Gender</InputLabel>
-                        <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} required>
+                        <Select value={formData.gender} onChange={(e) => handleInputChange(e, "gender")} label="Gender" required>
                             <MenuItem value="Male">Male</MenuItem>
                             <MenuItem value="Female">Female</MenuItem>
                             <MenuItem value="Unidentified">Unidentified</MenuItem>
@@ -166,7 +166,7 @@ export default function AppointmentForm({ session, dentist }: { session: any, de
 
                 <FormControl fullWidth>
                     <InputLabel>Purpose</InputLabel>
-                    <Select value={formData.purpose} onChange={(e) => handleInputChange(e, "purpose")} required>
+                    <Select value={formData.purpose} onChange={(e) => handleInputChange(e, "purpose")} label="Purpose" required>
                         {purposes.map(purpose => (
                             <MenuItem key={purpose.area_id} value={purpose.area_id}>{purpose.area_name}</MenuItem>
                         ))}

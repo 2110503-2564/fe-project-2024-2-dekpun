@@ -7,4 +7,4 @@ export default async function getToken() {
     const token = session?.user?.token
 
     return token
-}
+};
