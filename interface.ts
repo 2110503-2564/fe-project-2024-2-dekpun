@@ -53,7 +53,6 @@ interface MyAppointmentProps {
 }
 
 //GET ROLES
-
 interface AllDentistJson {
     success: string,
     data: AllDentistData[]
@@ -65,10 +64,16 @@ interface AllDentistData {
     area_existence: boolean
 }
 
+interface Pagination {
+    page: number,
+    limit: number
+}
 
 //GET ROLE 
 interface DentistByRoleJson {
-    success: string,
+    success: boolean,
+    count: number,
+    pagination: { next?: Pagination, prev?: Pagination },
     data: DentistByRoleData[]
 }
 
