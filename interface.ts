@@ -54,7 +54,7 @@ interface MyAppointmentProps {
 
 //GET ROLES
 interface AllDentistJson {
-    success: string,
+    success: boolean,
     data: AllDentistData[]
 }
 
@@ -74,6 +74,7 @@ interface DentistByRoleJson {
     success: boolean,
     count: number,
     pagination: { next?: Pagination, prev?: Pagination },
+    totalPages: number,
     data: DentistByRoleData[]
 }
 
