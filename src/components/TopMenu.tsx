@@ -43,7 +43,7 @@ export default function TopMenu( {session, token} : {session?: any, token?: stri
                         <>
                             {
                                 role === "admin" ? 
-                                <TopMenuItem title='View all Appointment' pageRef='/appointmentlist'/> :
+                                <TopMenuItem title='All Appointment' pageRef='/appointmentlist'/> :
                                 <TopMenuItem title='My Appointment' pageRef='/appointmentlist'/>
                             }
                             <Link href="/api/auth/logout">
