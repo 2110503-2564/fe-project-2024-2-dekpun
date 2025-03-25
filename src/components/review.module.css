@@ -1,0 +1,32 @@
+/* Reviews.module.css */
+
+@keyframes moveReviews {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  .reviewsContainer {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .reviewsWrapper {
+    display: flex;
+    animation: moveReviews 30s linear infinite; /* Adjust the duration to slow it down */
+  }
+  
+  .review {
+    min-width: 300px; /* Adjust based on the width of your reviews */
+    margin-right: 16px; /* Adjust the spacing between reviews */
+    flex-shrink: 0;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  

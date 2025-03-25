@@ -3,7 +3,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 export default function Banner () {
@@ -17,7 +16,6 @@ export default function Banner () {
                 slidesPerView={1} // Show one slide at a time
                 autoplay={{ delay: 3000, disableOnInteraction: false }} // Auto slide every 3 sec
                 pagination={{ clickable: true }} // Dots navigation
-                navigation // Prev/Next buttons
                 loop // Infinite looping
                 className="w-full"
                 >
