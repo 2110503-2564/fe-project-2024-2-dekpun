@@ -1,14 +1,15 @@
 import { BACKEND_URL } from "@/backend-config";
 
-export default async function getDentists( page?:number, limit?:number, searchQuery?:string, sortBy?:string ) {
+export default async function getDentists( roleList?:string[], page?:number, limit?:number, searchQuery?:string, sortBy?:string ) {
 
     let queryString;
 
     queryString = new URLSearchParams({
+        category: roleList?.join(",") || "",
         page: page?.toString() || "",
         limit: limit?.toString() || "",
         search: searchQuery || "", // Include search query
-        sort: sortBy || "",
+        sort: sortBy || ""
     }).toString()
 
     const response = await fetch(`${BACKEND_URL}/api/v1/dentists?${queryString}`, { next: {tags:['dentists']} });
