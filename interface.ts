@@ -94,12 +94,12 @@ interface UserJson {
 
 interface UserData {
     _id: string
-    name: String,
-    tel: String,
+    name: string,
+    tel: string,
     gender: String,
     birthdate: Date,
     email: String,
-    role: String,
+    role: string,
     createdAt: Date,
     __v: string,
     bookings: Bookings[],

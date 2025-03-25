@@ -18,7 +18,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
     
     const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
     const [status, setStatus] = useState("booked");
-    const [userProfile,setUserProfile] = useState("");
+    const [userProfile,setUserProfile] = useState<UserData|null>(null);
     
 
     if (!appointmentsJson) {
@@ -82,13 +82,12 @@ useEffect(() => {
             };
             fetchUserProfile();
         }
-    },);
-    
+    },[]);
     return (
      <main className="flex flex-col items-center px-6 py-12 min-h-screen rounded-3xl">
         
         { 
-            userProfile.role === "admin" ?(
+            userProfile?.role === "admin" ?(
             <><h1 className="text-3xl font-bold text-blue-800 mb-5">All Appointments </h1>
                 {appointments.length === 0 ? (
                 <p className="text-gray-500">No upcoming appointments.</p>
