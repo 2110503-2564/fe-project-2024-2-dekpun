@@ -1,38 +1,26 @@
-"use client"  // Ensure this is a Client Component
+"use client" 
 
 import { useState } from "react";
-import { Card, CardContent, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import deleteAppointment from "@/libs/deleteAppointment";
 import updateAppointment from "@/libs/updateAppointment";
+import getUserProfile from "@/libs/getUserProfile";
+import getAppointments from "@/libs/getAppointments";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import getAppointments from "@/libs/getAppointments";
-import Link from "next/link";
 
-// Type definition for the props
 
 export default function MyAppointment({ appointmentsJson, session }: MyAppointmentProps) {
 
     const router = useRouter();
     const token = session?.user.token
     const uid = session?.user._id
-
+    
     const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
+    const [status, setStatus] = useState("booked");
+    const [userProfile,setUserProfile] = useState("");
+    
 
-    useEffect(() => {
-            const fetchAppointment = async () => {
-                try {
-                    const profileData = await getAppointments(await token);
-                    setAppointments(profileData.data)
-                    
-                } catch (error) {
-                    console.error("Failed to fetch user profile:", error);
-                }
-            };
-            fetchAppointment;
-    }, [appointments]);
-
-    // Handle loading state if appointmentsJson is null
     if (!appointmentsJson) {
         return <p>No appointments available.</p>;  
     }
@@ -43,6 +31,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
                 booking_id: appointmentId
             }).toString();   
             router.push(`../../appointment/manage?${queryString}`)
+            
         }
     }
 
@@ -60,7 +49,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
                 alert("Failed to " + status + " appointment.");
             }
         } catch (error) {
-            console.error("Error deleting appointment:", error);
+            console.error("Error while editing status appointment:", error);
             alert("An error occurred while " + status + " the appointment.");
         }
     }
@@ -80,64 +69,234 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
         }
     };
 
+useEffect(() => {
+        if (token) {
+            const fetchUserProfile = async () => {
+                try {
+                    const profileData = await getUserProfile(await token);
+                    setUserProfile(profileData.data);
+
+                } catch (error) {
+                    console.error("Failed to fetch user profile:", error);
+                }
+            };
+            fetchUserProfile();
+        }
+    },);
+    
     return (
-        <main className="w-full flex flex-col items-center space-y-6 p-6">
-            <h1 className="text-3xl font-bold text-blue-800">My Appointments</h1>
-
-            {appointments.length === 0 ? (
+     <main className="flex flex-col items-center px-6 py-12 min-h-screen rounded-3xl">
+        
+        { 
+            userProfile.role === "admin" ?(
+            <><h1 className="text-3xl font-bold text-blue-800 mb-5">All Appointments </h1>
+                {appointments.length === 0 ? (
                 <p className="text-gray-500">No upcoming appointments.</p>
-            ) : (
-                appointments.map((appointmentItem) => (
-                    <Card key={appointmentItem._id} className="w-[90%] md:w-[60%] shadow-lg">
-                        <CardContent className="p-6 flex flex-col space-y-4">
-                            <div className="text-xl font-semibold text-gray-800">
-                                {appointmentItem.user.name}
-                            </div>
-                            <div className="text-xl font-semibold text-gray-800">
-                                Dentist: {appointmentItem.dentist.name}
-                            </div>
-                            <div className="text-lg text-blue-600 font-medium">
-                                {appointmentItem.booking_date}
-                            </div>
-                            <div className="text-gray-700">
-                                <strong>Clinic:</strong> {"DekPun Clinic"}
-                            </div>
-                            <div className="text-gray-700">
-                                <strong>Purpose:</strong> {appointmentItem.dentist.area_of_expertise}
-                            </div>
-                            <div className={`text-sm font-semibold 
-                                ${appointmentItem.booking_status === "booked" ? "text-green-600" : "text-red-600"}`}>
-                                {appointmentItem.booking_status}
-                            </div>
-
-                            <div className="flex justify-end space-x-3">
-                                <Button 
-                                    variant="outlined"  
-                                    color="primary"
-                                    onClick={() => handleEditStatus(appointmentItem._id, "canceled")}>
-                                    Edit
-                                </Button>
-                            { 
-                                appointmentItem.booking_status !== "canceled" && (
-                                <Button 
-                                    variant="outlined"  
-                                    color="error"
-                                    onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}>
-                                    Cancel Booking
-                                </Button>
-                                )
-                            }
-                                <Button 
-                                    variant="outlined"  
-                                    color="error"
-                                    onClick={() => handleDelete(appointmentItem._id)}>
+            ) : (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full bg-white-200 max-w-7xl">
+                      {appointments.map((appointmentItem) => (
+                    
+                    <div className="w-full bg-[#FDFDFD] rounded-lg shadow-xl  backdrop-blur-lg  pl-[20px] pt-[20px] pr-[15px] pb-[15px]">
+                    <div className="text-md  text-black">
+                    <strong>Name </strong>: {appointmentItem.user.name}
+                    </div>
+                    <div className="text-md text-black">
+                    <strong>Time</strong> : {appointmentItem.booking_date}
+                    </div>
+                    <div className="text-md  text-black">
+                    <strong>Dentist</strong> : {appointmentItem.dentist.name}
+                    </div>
+                    <div className="text-md text-black">
+                        <strong>Expertise </strong>: {appointmentItem.dentist.area_of_expertise}
+                    </div>
+                    <div className={`text-xl font-bold
+                    ${appointmentItem.booking_status === "booked" ? " text-[#FCC800]" :""}
+                    ${appointmentItem.booking_status === "completed" ? " text-[#22963D]" :""}
+                    ${appointmentItem.booking_status === "canceled" ? " text-[#FF0000]" :""}`}>
+                    Status : {appointmentItem.booking_status}
+                </div>
+                <div className="mt-2 flex justify-center">
+                <Button 
+                    variant="outlined" 
+                    onClick={() => handleUpdateStatus(appointmentItem._id,"completed")}
+                    sx={{
+                    color: '#22963D',
+                    borderRadius: '8px',
+                    borderColor: '#22963D', 
+                    '&:hover': {
+                    backgroundColor: '#22963D',  
+                    color: 'white',
+                    borderColor: '#22963D',          
+                        },
+                        }}
+                        disabled={appointmentItem.booking_status !== "booked"}>
+                        Complete
+                     </Button>
+                <Button 
+                     variant="outlined" 
+                     onClick={() => handleEditStatus(appointmentItem._id, "booked")}
+                      sx={{
+                        marginLeft: '5px',
+                        marginRight: '5px',
+                        color: '#FCC800',
+                        borderRadius: '8px',
+                    borderColor: '#FCC800', 
+                    '&:hover': {
+                      backgroundColor: '#FCC800',  
+                     color: 'white',
+                     borderColor: '#FCC800',          
+           },
+     }}
+     disabled={appointmentItem.booking_status !== "booked"}>
+                    Edit
+                    </Button>
+                        <Button 
+                    variant="outlined"  
+                    color="error"
+                    onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}
+                    sx={{
+                    borderRadius: '8px',
+                    marginRight: '5px', 
+                    '&:hover': {
+                     backgroundColor: '#FF0000',  
+                         color: 'white',          
+                                            },
+                                          }}
+                                          disabled={appointmentItem.booking_status !== "booked" }>
+                                    Cancel
+                         </Button>
+                         <Button 
+                    variant="outlined"  
+                    onClick={() => handleDelete(appointmentItem._id)}
+                    sx={{
+                    borderRadius: '8px',
+                    color: '#000000',
+                    borderColor: '#000000', 
+                    '&:hover': {
+                     backgroundColor: '#000000',  
+                         color: 'white',          
+                                            },
+                                          }}
+                                         >
                                     Remove
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))
+                         </Button>
+                        </div>
+                    </div>
+                )
             )}
+            </div>
+            )}
+            </>
+        ):(<>
+                <h1 className="text-3xl font-bold text-blue-800">My Appointment </h1>
+                {appointments.length === 0 ? (<p className="text-gray-500">No upcoming appointments.</p>):(<div className="mt-[20px] w-[960px] bg-[#FDFDFD] rounded-2xl shadow-xl  backdrop-blur-lg  pl-[35px] pt-[20px] pr-[15px] pb-[15px]">
+                    {appointments.map((appointmentItem) => (
+                        <>
+                        {
+                            appointmentItem.booking_status === 'booked'?(<>
+                            <>
+                    <div className={`text-3xl font-bold mb-[20px]
+                    ${appointmentItem.booking_status === "booked" ? " text-[#FCC800]" :""}`}>
+                    Status : {appointmentItem.booking_status}
+                </div>
+                <div className=" flex flex-row items-center">
+                <div className=" w-[480px] bg-[#FDFDFD] rounded-xl shadow-xl backdrop-blur-lg  pl-[35px] pt-[20px] pr-[15px] pb-[15px] mx-[10px]">
+                    <div className="text-xl text-black">
+                            <strong>Name</strong> : {appointmentItem.user.name}
+                    </div>
+                    <div className="text-xl text-black">
+                    <strong>Time</strong> : {appointmentItem.booking_date}
+                    </div>
+                    <div className="text-xl text-black">
+                        <strong>Purpose </strong>: {appointmentItem.dentist.area_of_expertise}
+                    </div>
+                </div>
+                <div className=" w-[480px] bg-[#FDFDFD] rounded-xl shadow-xl backdrop-blur-lg  pl-[35px] pt-[20px] pr-[15px] pb-[15px] mx-[10px]">
+                    <div className="text-xl  text-black">
+                    <strong>Dentist</strong> : {appointmentItem.dentist.name}
+                    </div>
+                    <div className="text-xl  text-black">
+                    <strong>Branch</strong> : Dekpun Clinic
+                    </div>
+                    <div className="text-xl text-black">
+                        <strong>Experience</strong> : {appointmentItem.dentist.year_of_experience}
+                    </div>
+                </div>
+                </div>
+                <div className="flex justify-center items-center mt-[20px] ">
+                <Button 
+                     variant="outlined" 
+                     color="primary"
+                     onClick={() => handleEditStatus(appointmentItem._id, "booked")}
+                      sx={{
+                        fontWeight : "bold",
+                        marginRight: '15px',
+                        color: '#FCC800',
+                        borderRadius: '8px',
+                    borderColor: '#FCC800', 
+                    '&:hover': {
+                      backgroundColor: '#FCC800',  
+                     color: 'white',
+                     borderColor: '#FCC800',          
+           },
+     }}>
+                    Edit
+                    </Button>
+                        <Button 
+                    variant="outlined"  
+                    color="error"
+                    onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}
+                    sx={{
+                        fontWeight : "bold",
+                    borderRadius: '8px', 
+                    '&:hover': {
+                     backgroundColor: '#FF0000',  
+                         color: 'white',          
+                                            },
+                                          }}
+                                    >
+                                    Cancel
+                         </Button>
+                </div>
+                    </>
+                            </>):""
+                        }
+                        </>
+                    )
+            )}
+                </div>)
+                    
+                }
+                <h1 className="text-3xl font-bold text-blue-800 my-[50px] ">History</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full bg-white-200 max-w-6xl">
+                {appointments.map((appointmentItem) => (
+                    <>
+                    {
+                        appointmentItem.booking_status !== 'booked'?(<>
+                        <div className="w-full bg-[#FDFDFD] rounded-lg shadow-xl  backdrop-blur-lg  pl-[20px] pt-[20px] pr-[15px] pb-[15px]">
+                        <div className="text-md  text-black">
+                    <strong>Dentist</strong> : {appointmentItem.dentist.name}
+                    </div>
+                    <div className="text-md text-black">
+                        <strong>Expertise </strong>: {appointmentItem.dentist.area_of_expertise}
+                    </div>
+                    <div className="text-md text-black">
+                    <strong>Time</strong> : {appointmentItem.booking_date}
+                    </div>
+                    <div className={`text-xl font-bold
+                    ${appointmentItem.booking_status === "completed" ? " text-[#22963D]" :"text-[#FF0000]"}
+                    `}>
+                    Status : {appointmentItem.booking_status}
+                </div>
+                    </div>
+                        
+                        </>) :""
+                    } </>))}
+                </div>
+                
+                    </>)
+                    }
+            
         </main>
+        
     );
 }
