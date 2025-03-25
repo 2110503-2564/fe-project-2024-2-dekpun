@@ -19,7 +19,15 @@ export default function Register() {
 
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [errors, setErrors] = useState({} as any);
+    const [errors, setErrors] = useState({
+        name: "",
+        tel: "",
+        birthdate: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        server: ""
+    });
     const [successMessage, setSuccessMessage] = useState("");
 
     const [validateTrigger, setValidateTrigger] = useState(false);
@@ -30,7 +38,8 @@ export default function Register() {
         birthdate: "Birthdate must be a past date.",
         email: "Invalid email format.",
         password: "Password must be at least 6 characters.",
-        confirmPassword: "Passwords do not match."
+        confirmPassword: "Passwords do not match.",
+        server: "Failed to register. Please try again."
     };
 
     // Data Validation        
@@ -39,32 +48,44 @@ export default function Register() {
         const newErrors: any = {};
 
         // Validations
-        if ( (!formData.name.trim() && formData.name.trim() !== "" ) || validateTrigger ) {
+        if (  !formData.name.trim() && ( formData.name.trim() !== "" || validateTrigger ) ) {
             newErrors.name = errorList.name;
+        } else {
+            newErrors.name = "";
         }
 
-        if ( (!/^0\d{2}-\d{3}-\d{4}$/.test(formData.tel) &&  formData.tel !== "" ) || validateTrigger ) {
+        if ( !/^0\d{2}-\d{3}-\d{4}$/.test(formData.tel) && ( formData.tel !== "" || validateTrigger ) ) {
             newErrors.tel = errorList.tel;
+        } else if (formData.tel !== "") {
+            newErrors.tel = "";
         }
 
-        if ( ((!formData.birthdate || new Date(formData.birthdate) >= new Date()) &&  formData.birthdate !== "" ) || validateTrigger ) {
+        if ( (!formData.birthdate || new Date(formData.birthdate) >= new Date()) && ( formData.birthdate !== "" || validateTrigger ) ) {
             newErrors.birthdate = errorList.birthdate;
+        } else if (formData.birthdate !== "") {
+            newErrors.birthdate = "";
         }
 
-        if ( (!/^\S+@\S+\.\S+$/.test(formData.email) &&  formData.email !== "" ) || validateTrigger ) {
+        if ( !/^\S+@\S+\.\S+$/.test(formData.email) && ( formData.email !== "" || validateTrigger ) ) {
             newErrors.email = errorList.email;
+        } else if (formData.email !== "") {
+            newErrors.email = "";
         }
 
-        if ( (formData.password.length < 6 &&  formData.password !== "" ) || validateTrigger ) {
+        if ( formData.password.length < 6 && ( formData.password !== "" || validateTrigger ) ) {
             newErrors.password = errorList.password;
+        } else if (formData.password !== "") {
+            newErrors.password = "";
         }
         
-        if ( (formData.password !== confirmPassword &&  confirmPassword !== "" ) || validateTrigger ) {
+        if ( ( formData.password !== confirmPassword && confirmPassword !== "" ) || ( validateTrigger && confirmPassword === "" ) ) {
             newErrors.confirmPassword = errorList.confirmPassword;
+        } else /*if (formData.password === confirmPassword)*/ {
+            newErrors.confirmPassword = "";
         }
 
         console.log(newErrors);
-        setErrors(newErrors);
+        setErrors(prev => ( {...prev, ...newErrors} ));
         
     }, [formData, confirmPassword, validateTrigger]);
 
@@ -84,37 +105,45 @@ export default function Register() {
         setValidateTrigger(true);
 
         // Send Data to API
+        let response;
+
         try {
-            const response = await userRegister(formData);
+            response = await userRegister(formData);
 
-            if (response.success) {
+            setSuccessMessage("Registration successful!");
 
-                setSuccessMessage("Registration successful!");
-    
-                Swal.fire({
-                    title: "You are now registered!",
-                    icon: "success",
-                    draggable: true
-                }).then( () => {
-                    setFormData({
-                        name: "",
-                        tel: "",
-                        gender: "Male",
-                        birthdate: "",
-                        email: "",
-                        password: "",
-                    });
-                    setConfirmPassword("");
-    
-                    router.push("/api/auth/login");
+            Swal.fire({
+                title: "You are now registered!",
+                icon: "success",
+                draggable: true
+            }).then( () => {
+                setValidateTrigger(false);
+                
+                setFormData({
+                    name: "",
+                    tel: "",
+                    gender: "Male",
+                    birthdate: "",
+                    email: "",
+                    password: "",
                 });
-            } else {
-                // setErrors({ ...errors, ...{ server: "Failed to register. Please try again." } });
-            }
+
+                setConfirmPassword("");
+
+                router.push("/api/auth/login");
+            });
 
         } catch (error) {
             console.log(error);
-            // setErrors({ server: "Failed to register. Please try again." });
+
+            Swal.fire({
+                title: "Registeration Failed!",
+                icon: "error",
+                text: response?.message || "Some error occured while registration.",
+                draggable: true
+            }).then( () => {
+                setConfirmPassword("");
+            });
         }
     };
 
