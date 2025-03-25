@@ -26,11 +26,14 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
         return <p>No appointments available.</p>;  
     }
 
-    const handleEditStatus = (appointmentId: string, status: string) => {
+    const handleEditStatus = (appointment: AppointmentData) => {
         if(appointments) {
             const queryString = new URLSearchParams({
-                booking_id: appointmentId
+                booking_id: appointment._id,
+                UserJson: JSON.stringify(appointment.user)
             }).toString();   
+
+            alert(appointment._id)
             router.push(`../../appointment/manage?${queryString}`) 
         }
     }
@@ -152,7 +155,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
                 <Button 
                      variant="outlined" 
                      color="primary"
-                     onClick={() => handleEditStatus(appointmentItem._id, "booked")}
+                     onClick={() => handleEditStatus(appointmentItem)}
                       sx={{
                         fontWeight : "bold",
                         marginRight: '15px',

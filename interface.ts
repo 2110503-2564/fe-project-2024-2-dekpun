@@ -5,6 +5,7 @@ interface AppointmentJson {
     pagination: Object,
     data: AppointmentData[]
 }
+
 interface AppointmentData {
     user: UserJson,
     dentist: DentistJson,
@@ -113,4 +114,10 @@ interface Bookings {
     booking_date: Date,
     booking_status: string
     __v: string
+}
+
+interface EditProp {
+    booking_id: string,
+    dentist?: DentistJson,
+    user?: UserJson
 }

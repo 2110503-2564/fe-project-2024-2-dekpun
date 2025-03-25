@@ -7,7 +7,7 @@ export default async function AppointmentPage({ searchParams }: { searchParams: 
     
     const session = await getServerSession(authOptions)
 
-    const dentist = {
+    const dentist:DentistJson = {
         _id: searchParams._id || "Not found: _id",
         name: searchParams.name || "Not found: name",
         area_of_expertise: searchParams.area_of_expertise || "Not found: area_of_expertise",
@@ -16,12 +16,15 @@ export default async function AppointmentPage({ searchParams }: { searchParams: 
         id: searchParams.id || "Not found: id",
     };
 
+    const normalProp = {booking_id: ""}
+    const withDentistProp = {booking_id:"", dentist}
+
     return(
         <>
             {Object.keys(searchParams).length === 0 ? (
-                <AppointmentForm session={session} option="create" booking_id=""/>
+                <AppointmentForm session={session} option="create" Prop={normalProp}/>
             ) : (
-                <AppointmentForm session={session} option="create" booking_id="" dentist={dentist} />
+                <AppointmentForm session={session} option="create" Prop={withDentistProp} />
             )}
         </>
     )

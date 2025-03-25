@@ -19,20 +19,9 @@ import editAppointment from "@/libs/editAppointment";
 
 import Swal from "sweetalert2";
 
-export default function AppointmentForm({ 
-    session, 
-    option, 
-    Prop 
-}: { 
-    session: any; 
-    option: string; 
-    Prop: EditProp; 
-}) {
+export default function Profile({ session }: { session: any }) {
 
-    const { booking_id, dentist, user } = Prop;
     const router = useRouter();
-    const [userJson, setUserJson] = useState<UserJson | null>(user || null);
-    const parseUserJson = JSON.parse((userJson || "") as string)
 
     //State 1
     //Use for fetched data
@@ -42,15 +31,14 @@ export default function AppointmentForm({
     
     //State 2
     //Use for filled data
-    // console.log(JSON.parse((userJson || "") as string).name);
     const [formData, setFormData] = useState({
-        nameLastname: userJson ? parseUserJson.name || "" : userProfile?.name || "",
-        tel: userJson ? parseUserJson.tel || "" : userProfile?.tel || "",
-        gender: userJson ? parseUserJson.gender || "" : userProfile?.gender || "",
+        nameLastname: userProfile?.name || "",
+        tel: userProfile?.tel || "",
+        gender: userProfile?.gender || "",
         purpose: getIdbyRole(dentist?.area_of_expertise || "")?.area_id || "",
         dentistId: dentist?._id || "",
         dentistName: dentist?.name || "",
-        birthday: userJson ? dayjs(parseUserJson.birthdate) : null as Dayjs | null,
+        birthday: null as Dayjs | null,
         appointmentDate: null as Dayjs | null,
     });
     

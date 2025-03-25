@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@mui/material";
 import AppointmentForm from "./AppointmentForm";
 
@@ -5,6 +7,9 @@ export default function AppointmentCard(
     { appointmentItem, handleUpdateStatus, handleEditStatus, handleDelete } : 
     { appointmentItem:AppointmentData, handleUpdateStatus:Function, handleEditStatus:Function, handleDelete:Function }
 ) {
+
+    // console.log(appointmentItem._id)
+    // console.log(appointmentItem.user)
     return (
         <div className="w-full bg-[#FDFDFD] rounded-lg shadow-xl  backdrop-blur-lg  pl-[20px] pt-[20px] pr-[15px] pb-[15px]">
             <div className="text-md  text-black">
@@ -52,7 +57,7 @@ export default function AppointmentCard(
 
                 <Button 
                     variant="outlined" 
-                    onClick={ () => handleEditStatus(appointmentItem._id, "booked") }
+                    onClick={ () => handleEditStatus(appointmentItem, "booked") }
                     sx={{
                         marginLeft: '5px',
                         marginRight: '5px',
