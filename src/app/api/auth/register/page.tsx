@@ -2,6 +2,7 @@
 import userRegister from "@/libs/userRegister";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Select, MenuItem, TextField, FormControl, InputLabel, Card, CardContent, Button} from "@mui/material";
 import Swal from "sweetalert2";
 
 export default function Register() {
@@ -98,7 +99,7 @@ export default function Register() {
     };
 
     return (
-        <div className="flex h-[80vh] items-center justify-center bg-gray-100">
+        <div className="flex h-[100vh] items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-6 mt-4 rounded-lg shadow-lg">
                 <h1 className="text-2xl font-bold text-center mb-4">Register</h1>
 
@@ -109,7 +110,8 @@ export default function Register() {
 
                     {/* Name */}
                     <div>
-                        <input
+                        <TextField
+                            label="Full Name"
                             type="text"
                             name="name"
                             value={ formData.name }
@@ -122,7 +124,8 @@ export default function Register() {
 
                     {/* Contact Number */}
                     <div>
-                        <input
+                        <TextField
+                            label="Tel"
                             type="text"
                             name="tel"
                             value={ formData.tel }
@@ -134,17 +137,22 @@ export default function Register() {
                     </div>
 
                     {/* Gender */}
-                    <div>
-                        <select
+                    <div >
+                    <FormControl fullWidth>
+                    <InputLabel>Gender</InputLabel>
+                    <Select
+                            label="Gender"
                             name="gender"
                             value={ formData.gender }
                             onChange={ handleChange }
-                            className="w-full p-2 border rounded-md"
                         >
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Unidentified">Unidentified</option>
-                        </select>
+                            <MenuItem key="Male" value="Male">Male</MenuItem>
+                            <MenuItem key="Female" value="Female">Female</MenuItem>
+                            <MenuItem key="Unidentified" value="Unidentified">Unidentified</MenuItem>
+                            
+                        </Select>
+                     </FormControl>
+                        
                     </div>
 
                     {/* Birthdate */}
@@ -154,14 +162,16 @@ export default function Register() {
                             name="birthdate"
                             value={ formData.birthdate }
                             onChange={ handleChange }
-                            className="w-full p-2 border rounded-md"
+                            className="text-[#666666] w-full p-2 border border-[#C4C4C4] rounded-md h-[60px] focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-black"
+                            
                         />
                         { errors.birthdate && <p className="text-red-500 text-sm">{ errors.birthdate }</p> }
                     </div>
 
                     {/* Email */}
                     <div>
-                        <input
+                        <TextField
+                            label="Email"
                             type="email"
                             name="email"
                             value={ formData.email }
@@ -174,7 +184,8 @@ export default function Register() {
 
                     {/* Password */}
                     <div>
-                        <input
+                        <TextField
+                            label="Password"
                             type="password"
                             name="password"
                             value={ formData.password }
@@ -187,7 +198,8 @@ export default function Register() {
 
                     {/* Confirm Password */}
                     <div>
-                        <input
+                        <TextField
+                            label="Confirm Password"
                             type="password"
                             name="confirmPassword"
                             value={ confirmPassword }
@@ -199,9 +211,12 @@ export default function Register() {
                     </div>
 
                     {/* Submit Button */}
-                    <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition">
+                    <div className="flex justify-center items-center">
+                    <button type="submit" className="w-[50%] bg-[#007AFF] text-white py-2 px-4 rounded-xl hover:bg-[#00BCD4] hover:text-white transition">
                         Register
                     </button>
+                    </div>
+
                 </form>
             </div>
         </div>

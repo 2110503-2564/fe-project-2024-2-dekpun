@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { getProviders, signIn } from "next-auth/react";
 import Link from "next/link";
-
+import { TextField } from "@mui/material";
 export default function SignIn() {
     const [providers, setProviders] = useState<any>({});
 
@@ -41,13 +41,14 @@ export default function SignIn() {
     return (
         <div className="flex h-[80vh] items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-6 px-10 rounded-lg shadow-lg">
-                <h1 className="text-2xl font-bold text-center mb-4">Login</h1>
-
+                <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
                 {/* Email Input */}
                 <div className="mb-4">
-                    <label className="block text-gray-700">Email</label>
-                    <input
+                    <label className="block text-gray-700 mb-2">Email</label>
+                    <TextField
                         type="email"
+                        fullWidth 
+                        required
                         value={ email }
                         onChange={ handleEmailChange }
                         className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -58,9 +59,11 @@ export default function SignIn() {
 
                 {/* Password Input */}
                 <div className="mb-4">
-                    <label className="block text-gray-700">Password</label>
-                    <input
+                    <label className="block text-gray-700 mb-2">Password</label>
+                    <TextField
                         type="password"
+                        fullWidth 
+                        required
                         value={ password }
                         onChange={ (e) => setPassword(e.target.value) }
                         className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -76,7 +79,7 @@ export default function SignIn() {
                             <button
                                 key={provider.id}
                                 onClick={() => handleSignIn(provider.id)}
-                                className="w-[50%] bg-[#33ff24] text-black py-2 px-4 rounded-xl border border-black hover:bg-[#22963D] hover:text-white transition"
+                                className="w-[50%] bg-[#007AFF] text-white py-2 px-4 rounded-xl hover:bg-[#00BCD4] hover:text-white transition"
                             >
                                 Login
                             </button>
