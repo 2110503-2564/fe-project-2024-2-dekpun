@@ -1,0 +1,45 @@
+/* ======================== For nproggress only ======================== */
+
+/* Add these styles to your globals.css */
+#nprogress {
+    pointer-events: none;
+  }
+  
+  #nprogress .bar {
+    background: #4CAF50; /* Tooth-themed green */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    z-index: 1031;
+  }
+  
+  #nprogress .peg {
+    box-shadow: 0 0 10px #4CAF50, 0 0 5px #4CAF50;
+  }
+  
+  #nprogress .spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1031;
+    margin-top: -18px;
+    margin-left: -18px;
+  }
+  
+  #nprogress .spinner-icon {
+    border: solid 2px transparent;
+    border-top: solid 2px #4CAF50;
+    border-left: solid 2px #4CAF50;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    animation: nprogress-spinner 400ms linear infinite;
+  }
+  
+  @keyframes nprogress-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
