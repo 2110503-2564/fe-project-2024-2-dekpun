@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "@/backend-config";
 
-export default async function getRole( role:string, page?:number, limit?:number, searchQuery?:string ) {
+export default async function getRole( role:string, page?:number, limit?:number, searchQuery?:string, sortBy?:string, sortOrder?:string ) {
 
     let queryString;
 
@@ -8,6 +8,8 @@ export default async function getRole( role:string, page?:number, limit?:number,
         page: page?.toString() || "",
         limit: limit?.toString() || "",
         search: searchQuery || "", // Include search query
+        sort: sortBy || "",
+        // order: sortOrder || ""
     }).toString()
 
     const response = await fetch(`${BACKEND_URL}/api/v1/roles/${role}?${queryString}`);
