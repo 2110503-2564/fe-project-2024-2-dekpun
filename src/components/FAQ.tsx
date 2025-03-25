@@ -28,10 +28,11 @@ export function FAQ() {
         <div className="space-y-0.5">
 
           {[
-            {question: "How do I book an appointment?", answer: "Simply select a dentist and choose a time slot that works for you."},
-            {question: "Can I reschedule my appointment?", answer: "Yes, you can reschedule up to 24 hours in advance."},
-            {question: "How do I book an appointment?", answer: "Simply select a dentist and choose a time slot that works for you."},
-            {question: "Can I reschedule my appointment?", answer: "Yes, you can reschedule up to 24 hours in advance."}
+            {question: "How do I book an appointment?", answer: "Simply select a dentist and choose a date that works for you."},
+            {question: "Can I reschedule my appointment?", answer: "Yes, you can reschedule before appointment date is start."},
+            {question: "How do I find a dentist?", answer: "You can search for dentists based on their area of expertise and location using the search feature."},
+            {question: "Can I cancel my appointment?", answer: "Yes, you can cancel your appointment before appointment time."}
+            
           ].map((item, index) => (
             <motion.div
             key={index}

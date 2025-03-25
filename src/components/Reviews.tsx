@@ -15,10 +15,21 @@ export function Reviews() {
           <p className="text-right font-semibold">- Mike D.</p>
         </div>
         <div className={styles.review}>
+          <p className="italic">"The staff was so friendly, and the procedure was quick and easy."</p>
+          <p className="text-right font-semibold">- Michael T.</p>
+        </div>
+        <div className={styles.review}>
           <p className="italic">"Highly recommend, great experience!"</p>
           <p className="text-right font-semibold">- Emily R.</p>
         </div>
-        {/* Add more reviews if needed */}
+        <div className={styles.review}>
+          <p className="italic">"Excellent experience, highly recommend this dentist! - John D."</p>
+          <p className="text-right font-semibold">- Emily R.</p>
+        </div>
+        <div className={styles.review}>
+          <p className="italic">"Great customer service and a comfortable environment. - Emma W."</p>
+          <p className="text-right font-semibold">- Emily R.</p>
+        </div>
       </div>
     </div>
   );

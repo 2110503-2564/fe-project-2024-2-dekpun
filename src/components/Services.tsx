@@ -29,9 +29,9 @@ export default function Services() {
           { title: "General Dentistry", desc: "Routine checkups, cleanings, and fillings." },
           { title: "Orthodontics", desc: "Braces, Invisalign, and teeth alignment." },
           { title: "Cosmetic Dentistry", desc: "Teeth whitening, veneers, and more." },
-          { title: "General Dentistry", desc: "Routine checkups, cleanings, and fillings." },
-          { title: "Orthodontics", desc: "Braces, Invisalign, and teeth alignment." },
-          { title: "Cosmetic Dentistry", desc: "Teeth whitening, veneers, and more." }
+          { title: "Oral Surgery", desc: "Tooth extractions, implants, and corrective jaw procedures." },
+          { title: "Periodontics", desc: "Treatment for gum disease, including scaling and root planing." },
+          { title: "Pediatric Dentistry", desc: "Specialized care for children's teeth, from checkups to preventive treatments." }
         ].map((service, index) => (
           <motion.div
             key={index}

@@ -24,10 +24,10 @@ export default function DentCatalog() {
         { name: "Dr. Jane Smith", specialty: "Pediatric Dentist", rating: 4.8 },
         { name: "Dr. Emily White", specialty: "General Dentist", rating: 4.7 },
         { name: "Dr. Mark Brown", specialty: "Cosmetic Dentist", rating: 4.6 },
-        { name: "Dr. John Doe", specialty: "Orthodontist", rating: 4.9 },
-        { name: "Dr. Jane Smith", specialty: "Pediatric Dentist", rating: 4.8 },
-        { name: "Dr. Emily White", specialty: "General Dentist", rating: 4.7 },
-        { name: "Dr. Mark Brown", specialty: "Cosmetic Dentist", rating: 4.6 }
+        { name: "Dr. Grace Wilson", specialty: "Orthodontist", rating: 4.9 },
+        { name: "Dr. Emma Smith", specialty: "Prosthodontics", rating: 4.8 },
+        { name: "Dr. Jessica Gonzalez", specialty: "Root canal treatment", rating: 4.7 },
+        { name: "Dr. Michael Lopez", specialty: "Crown", rating: 4.6 }
       ].map((dentist, index) => (
         <motion.div
           key={index}
