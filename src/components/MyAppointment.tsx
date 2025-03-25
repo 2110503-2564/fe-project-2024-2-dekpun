@@ -9,6 +9,7 @@ import getAppointments from "@/libs/getAppointments";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import AppointmentCard from "./AppointmentCard";
+import dayjs, { Dayjs } from "dayjs";
 
 export default function MyAppointment({
   appointmentsJson,
@@ -143,7 +144,7 @@ export default function MyAppointment({
                             </div>
                             <div className="text-xl text-black">
                               <strong>Time</strong> :{" "}
-                              {appointmentItem.booking_date}
+                              {dayjs(appointmentItem.booking_date).format('YYYY-MM-DD')}
                             </div>
                             <div className="text-xl text-black">
                               <strong>Purpose </strong>:{" "}
@@ -185,6 +186,7 @@ export default function MyAppointment({
                           <Button
                             title="cancel button"
                             className="w-[40px] h-[40px]"
+                            onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -246,7 +248,7 @@ export default function MyAppointment({
                         {appointmentItem.dentist.area_of_expertise}
                       </div>
                       <div className="text-md text-black">
-                        <strong>Time</strong> : {appointmentItem.booking_date}
+                        <strong>Time</strong> : {dayjs(appointmentItem.booking_date).format('YYYY-MM-DD')}
                       </div>
                       <div
                         className={`text-xl font-bold
