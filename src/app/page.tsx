@@ -12,31 +12,37 @@ export default function Home() {
       {/* Hero Section */}
       <Banner/>
 
-      <div className="flex flex-col items-center w-full">
+      <div className="space-y-20">
 
-      {/* Services Section */}
-      <section className="w-full max-w-6xl py-10">
-        <h2 className="text-3xl font-bold text-center mb-6">Our Dental Services</h2>
-        <Services />
-      </section>
+        <div className="flex flex-col items-center w-full">
 
-      {/* Featured Dentists */}
-      <section className="w-full max-w-6xl py-10">
-        <h2 className="text-3xl font-bold text-center mb-6">Top Rated Dentists</h2>
-        <DentCatalog />
-      </section>
+        {/* Services Section */}
+        <section className="w-full max-w-6xl py-10 mb-20">
+          <h2 className="text-3xl font-bold text-center mb-6">Our Dental Services</h2>
+          <Services />
+        </section>
 
-      {/* Patient Reviews */}
-      <section className="w-full max-w-6xl py-10">
-        <h2 className="text-3xl font-bold text-center mb-6">What Our Patients Say</h2>
-        <Reviews />
-      </section>
+        {/* Featured Dentists */}
+        <section className="w-full max-w-6xl py-10 mb-20">
+          <h2 className="text-3xl font-bold text-center mb-6">Top Rated Dentists</h2>
+          <DentCatalog />
+        </section>
 
-      {/* FAQ Section */}
-      <section className="w-full max-w-6xl py-10">
-        <h2 className="text-3xl font-bold text-center mb-6">Frequently Asked Questions</h2>
-        <FAQ />
-      </section>
+        {/* Patient Reviews */}
+        <section className="w-full max-w-6xl py-10 mb-20">
+          <h2 className="text-3xl font-bold text-center mb-6">What Our Patients Say</h2>
+          <Reviews />
+        </section>
+
+        {/* FAQ Section */}
+        <section className="w-full max-w-6xl py-2 mb-20">
+          <h2 className="text-3xl font-bold text-center mb-6">Frequently Asked Questions</h2>
+          <FAQ />
+        </section>
+
+        <Footer/>
+
+        </div>
 
       </div>
 
