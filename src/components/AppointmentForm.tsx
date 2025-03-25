@@ -32,7 +32,7 @@ export default function AppointmentForm({
     const { booking_id, dentist, user } = Prop;
     const router = useRouter();
     const [userJson, setUserJson] = useState<UserJson | null>(user || null);
-    const parseUserJson = JSON.parse((userJson || "") as string)
+    const parseUserJson = userJson ? JSON.parse(userJson as unknown as string) : null;
 
     //State 1
     //Use for fetched data
