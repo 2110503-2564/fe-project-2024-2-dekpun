@@ -59,7 +59,7 @@ export default function DentistCatalog({ role }: { role?: string }) {
         fetchDentists();
     }, [role, currentPage, searchQuery, sortBy, sortOrder]);
 
-    const options = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
+    const options = AreaOfExpertiseList.map((item) => item.area_name);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -76,7 +76,7 @@ export default function DentistCatalog({ role }: { role?: string }) {
             </h1>
 
             {/* Search and Sort Controls */}
-            <div className="flex items-center justify-center w-full mb-6 space-x-4">
+            <div className="flex items-center justify-center w-full mb-2 space-x-4">
                 {/* Search Input */}
                 <input
                     type="text"
@@ -107,40 +107,97 @@ export default function DentistCatalog({ role }: { role?: string }) {
                 </select>
             </div>
 
-            {/* Display Selected Options */}
-            <input
-                type="text"
-                value={selectedOptions.join(", ")}
-                readOnly
-                placeholder="Selected options..."
-                className="w-[60%] px-4 py-2 border rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-500"
-            />
+            {
+                !role ?
+                    <div className="flex items-center justify-center w-full mb-4 space-x-4">
 
-            {/* Dropdown Menu */}
-            <div className="relative w-[40%]">
-                <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="w-full px-4 py-2 border rounded-md bg-white focus:ring-2 focus:ring-blue-500 transition-all hover:shadow-md"
-                >
-                    Select Options ⏷
-                </button>
+                        {/* Display Selected Options */}
+                        <input
+                            type="text"
+                            value={selectedOptions.join(", ")}
+                            readOnly
+                            placeholder="Selected options..."
+                            className="w-[70%] px-4 py-2 border rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-500"
+                        />
 
-                {dropdownOpen && (
-                    <div className="absolute left-0 mt-2 w-full bg-white border rounded-md shadow-lg z-10">
-                        {options.map((option) => (
-                            <label key={option} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedOptions.includes(option)}
-                                    onChange={() => toggleOption(option)}
-                                    className="mr-2"
-                                />
-                                {option}
-                            </label>
-                        ))}
+                        {/* Dropdown Menu */}
+                        <div className="relative w-[20%]">
+                            <button
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
+                                className="w-full px-4 py-2 border rounded-md bg-white focus:ring-2 focus:ring-blue-500 transition-all hover:shadow-md"
+                            >
+                                Select Options ⏷
+                            </button>
+
+                            {dropdownOpen && (
+                                <div className="absolute left-0 mt-2 w-full bg-white border rounded-md shadow-lg z-10 max-h-72 overflow-y-auto">
+                                    {/* "Check ALL" Option - Sticky & Centered */}
+                                    <div className="sticky top-0 bg-white border-b z-20">
+                                        <label
+                                            className={`flex items-center justify-center px-4 py-2 font-semibold ${
+                                                selectedOptions.length === options.length ? "cursor-not-allowed opacity-50" : "hover:bg-gray-100 cursor-pointer"
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedOptions.length === options.length}
+                                                disabled={selectedOptions.length === options.length}  // Disable when all selected
+                                                onChange={() => {
+                                                    if (selectedOptions.length === options.length) {
+                                                        setSelectedOptions([]); // Uncheck all
+                                                    } else {
+                                                        setSelectedOptions(options); // Select all
+                                                    }
+                                                }}
+                                                className="mr-2 hidden"
+                                            />
+                                            Check ALL
+                                        </label>
+                                    </div>
+
+                                    {/* Individual Options */}
+                                    {options.map((option) => (
+                                        <label key={option} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedOptions.includes(option)}
+                                                onChange={() => toggleOption(option)}
+                                                className="mr-2 hidden"
+                                            />
+                                            <span className={`w-5 h-5 flex items-center justify-center rounded-md mr-2 
+                                                ${selectedOptions.includes(option) ? 'text-white' : 'bg-white text-transparent'}`}>
+                                                ✔️
+                                            </span>
+                                            {option}
+                                        </label>
+                                    ))}
+
+                                    {/* "Uncheck ALL" Option - Sticky & Centered at Bottom */}
+                                    <div className="sticky bottom-0 bg-white border-t z-20">
+                                        <label
+                                            className={`flex items-center justify-center px-4 py-2 font-semibold ${
+                                                selectedOptions.length === 0 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-100 cursor-pointer"
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedOptions.length === 0}
+                                                disabled={selectedOptions.length === 0}  // Disable when none selected
+                                                onChange={() => setSelectedOptions([])}
+                                                className="mr-2 hidden"
+                                            />
+                                            Uncheck ALL
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
-                )}
-            </div>
+                :
+                    <></>
+            }
+
 
             {
                 (totalPages !== 0) ?
