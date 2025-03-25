@@ -19,6 +19,16 @@ export default function DentistCatalog({ role }: { role?: string }) {
     const area = AreaOfExpertiseList.find(item => item.area_id === role);
     const areaName = area ? area.area_name : "Not Found";
 
+    const options = AreaOfExpertiseList.map((item) => item.area_name);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggleOption = (option: string) => {
+        setSelectedOptions((prev) =>
+            prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
+        );
+    };
+
     // Fetch dentists whenever the page or search query changes
     useEffect(() => {
         console.log(searchQuery);
@@ -37,6 +47,7 @@ export default function DentistCatalog({ role }: { role?: string }) {
                     ) // Include searchQuery
                 :
                     response = await getDentists(
+                        selectedOptions,
                         currentPage,
                         pageSize,
                         searchQuery,
@@ -57,17 +68,7 @@ export default function DentistCatalog({ role }: { role?: string }) {
             }
         };
         fetchDentists();
-    }, [role, currentPage, searchQuery, sortBy, sortOrder]);
-
-    const options = AreaOfExpertiseList.map((item) => item.area_name);
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
-    const toggleOption = (option: string) => {
-        setSelectedOptions((prev) =>
-            prev.includes(option) ? prev.filter((item) => item !== option) : [...prev, option]
-        );
-    };
+    }, [role, currentPage, searchQuery, sortBy, sortOrder, selectedOptions]);
 
     return (
         <main className="flex flex-col items-center px-6 py-12 bg-gradient-to-br from-blue-100 to-gray-200 min-h-screen rounded-3xl">
