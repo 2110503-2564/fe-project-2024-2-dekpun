@@ -8,6 +8,7 @@ import getUserProfile from "@/libs/getUserProfile";
 import getAppointments from "@/libs/getAppointments";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import AppointmentCard from "./AppointmentCard";
 
 
 export default function MyAppointment({ appointmentsJson, session }: MyAppointmentProps) {
@@ -30,8 +31,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
             const queryString = new URLSearchParams({
                 booking_id: appointmentId
             }).toString();   
-            router.push(`../../appointment/manage?${queryString}`)
-            
+            router.push(`../../appointment/manage?${queryString}`) 
         }
     }
 
@@ -69,7 +69,7 @@ export default function MyAppointment({ appointmentsJson, session }: MyAppointme
         }
     };
 
-useEffect(() => {
+    useEffect(() => {
         if (token) {
             const fetchUserProfile = async () => {
                 try {
@@ -83,109 +83,36 @@ useEffect(() => {
             fetchUserProfile();
         }
     },[]);
+
     return (
      <main className="flex flex-col items-center px-6 py-12 min-h-screen rounded-3xl">
         
         { 
-            userProfile?.role === "admin" ?(
-            <><h1 className="text-3xl font-bold text-blue-800 mb-5">All Appointments </h1>
-                {appointments.length === 0 ? (
-                <p className="text-gray-500">No upcoming appointments.</p>
-            ) : (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full bg-white-200 max-w-7xl">
-                      {appointments.map((appointmentItem) => (
-                    
-                    <div className="w-full bg-[#FDFDFD] rounded-lg shadow-xl  backdrop-blur-lg  pl-[20px] pt-[20px] pr-[15px] pb-[15px]">
-                    <div className="text-md  text-black">
-                    <strong>Name </strong>: {appointmentItem.user.name}
-                    </div>
-                    <div className="text-md text-black">
-                    <strong>Time</strong> : {appointmentItem.booking_date}
-                    </div>
-                    <div className="text-md  text-black">
-                    <strong>Dentist</strong> : {appointmentItem.dentist.name}
-                    </div>
-                    <div className="text-md text-black">
-                        <strong>Expertise </strong>: {appointmentItem.dentist.area_of_expertise}
-                    </div>
-                    <div className={`text-xl font-bold
-                    ${appointmentItem.booking_status === "booked" ? " text-[#FCC800]" :""}
-                    ${appointmentItem.booking_status === "completed" ? " text-[#22963D]" :""}
-                    ${appointmentItem.booking_status === "canceled" ? " text-[#FF0000]" :""}`}>
-                    Status : {appointmentItem.booking_status}
-                </div>
-                <div className="mt-2 flex justify-center">
-                <Button 
-                    variant="outlined" 
-                    onClick={() => handleUpdateStatus(appointmentItem._id,"completed")}
-                    sx={{
-                    color: '#22963D',
-                    borderRadius: '8px',
-                    borderColor: '#22963D', 
-                    '&:hover': {
-                    backgroundColor: '#22963D',  
-                    color: 'white',
-                    borderColor: '#22963D',          
-                        },
-                        }}
-                        disabled={appointmentItem.booking_status !== "booked"}>
-                        Complete
-                     </Button>
-                <Button 
-                     variant="outlined" 
-                     onClick={() => handleEditStatus(appointmentItem._id, "booked")}
-                      sx={{
-                        marginLeft: '5px',
-                        marginRight: '5px',
-                        color: '#FCC800',
-                        borderRadius: '8px',
-                    borderColor: '#FCC800', 
-                    '&:hover': {
-                      backgroundColor: '#FCC800',  
-                     color: 'white',
-                     borderColor: '#FCC800',          
-           },
-     }}
-     disabled={appointmentItem.booking_status !== "booked"}>
-                    Edit
-                    </Button>
-                        <Button 
-                    variant="outlined"  
-                    color="error"
-                    onClick={() => handleUpdateStatus(appointmentItem._id, "canceled")}
-                    sx={{
-                    borderRadius: '8px',
-                    marginRight: '5px', 
-                    '&:hover': {
-                     backgroundColor: '#FF0000',  
-                         color: 'white',          
-                                            },
-                                          }}
-                                          disabled={appointmentItem.booking_status !== "booked" }>
-                                    Cancel
-                         </Button>
-                         <Button 
-                    variant="outlined"  
-                    onClick={() => handleDelete(appointmentItem._id)}
-                    sx={{
-                    borderRadius: '8px',
-                    color: '#000000',
-                    borderColor: '#000000', 
-                    '&:hover': {
-                     backgroundColor: '#000000',  
-                         color: 'white',          
-                                            },
-                                          }}
-                                         >
-                                    Remove
-                         </Button>
-                        </div>
-                    </div>
-                )
-            )}
-            </div>
-            )}
-            </>
-        ):(<>
+            userProfile?.role === "admin" ?
+                ( <>
+                    <h1 className="text-3xl font-bold text-blue-800 mb-5">All Appointments </h1>
+                    {
+                        appointments.length === 0 ?
+                            ( <p className="text-gray-500">No upcoming appointments.</p> )
+                        :
+                            (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full bg-white-200 max-w-7xl">
+                                    {
+                                        appointments.map( (appointmentItem) => ( 
+                                            <AppointmentCard
+                                                appointmentItem={ appointmentItem }
+                                                handleUpdateStatus={ handleUpdateStatus }
+                                                handleEditStatus={ handleEditStatus }
+                                                handleDelete={ handleDelete }
+                                            />
+                                        ))
+                                    }
+                                </div>
+                            )
+                    }
+                </> )
+            :
+                ( <>
                 <h1 className="text-3xl font-bold text-blue-800">My Appointment </h1>
                 {appointments.length === 0 ? (<p className="text-gray-500">No upcoming appointments.</p>):(<div className="mt-[20px] w-[960px] bg-[#FDFDFD] rounded-2xl shadow-xl  backdrop-blur-lg  pl-[35px] pt-[20px] pr-[15px] pb-[15px]">
                     {appointments.map((appointmentItem) => (
@@ -265,6 +192,7 @@ useEffect(() => {
                 </div>)
                     
                 }
+
                 <h1 className="text-3xl font-bold text-blue-800 my-[50px] ">History</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full bg-white-200 max-w-6xl">
                 {appointments.map((appointmentItem) => (
@@ -296,6 +224,5 @@ useEffect(() => {
                     }
             
         </main>
-        
     );
-}
+};

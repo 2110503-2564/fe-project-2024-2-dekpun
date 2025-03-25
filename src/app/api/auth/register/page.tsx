@@ -1,7 +1,7 @@
 "use client";
 import userRegister from "@/libs/userRegister";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, MenuItem, TextField, FormControl, InputLabel, Card, CardContent, Button} from "@mui/material";
 import Swal from "sweetalert2";
 
@@ -22,8 +22,56 @@ export default function Register() {
     const [errors, setErrors] = useState({} as any);
     const [successMessage, setSuccessMessage] = useState("");
 
+    const [validateTrigger, setValidateTrigger] = useState(false);
+
+    const errorList = {
+        name: "Full name is required.",
+        tel: "Invalid contact number format (e.g., 012-345-6789).",
+        birthdate: "Birthdate must be a past date.",
+        email: "Invalid email format.",
+        password: "Password must be at least 6 characters.",
+        confirmPassword: "Passwords do not match."
+    };
+
+    // Data Validation        
+    useEffect(() => { 
+        setSuccessMessage("");
+        const newErrors: any = {};
+
+        // Validations
+        if ( (!formData.name.trim() && formData.name.trim() !== "" ) || validateTrigger ) {
+            newErrors.name = errorList.name;
+        }
+
+        if ( (!/^0\d{2}-\d{3}-\d{4}$/.test(formData.tel) &&  formData.tel !== "" ) || validateTrigger ) {
+            newErrors.tel = errorList.tel;
+        }
+
+        if ( ((!formData.birthdate || new Date(formData.birthdate) >= new Date()) &&  formData.birthdate !== "" ) || validateTrigger ) {
+            newErrors.birthdate = errorList.birthdate;
+        }
+
+        if ( (!/^\S+@\S+\.\S+$/.test(formData.email) &&  formData.email !== "" ) || validateTrigger ) {
+            newErrors.email = errorList.email;
+        }
+
+        if ( (formData.password.length < 6 &&  formData.password !== "" ) || validateTrigger ) {
+            newErrors.password = errorList.password;
+        }
+        
+        if ( (formData.password !== confirmPassword &&  confirmPassword !== "" ) || validateTrigger ) {
+            newErrors.confirmPassword = errorList.confirmPassword;
+        }
+
+        console.log(newErrors);
+        setErrors(newErrors);
+        
+    }, [formData, confirmPassword, validateTrigger]);
+
     // Handle Input Change
     const handleChange = (e: any) => {
+        setValidateTrigger(false);
+
         (e.target.name === "confirmPassword") ?
             setConfirmPassword(e.target.value)
         :
@@ -33,80 +81,52 @@ export default function Register() {
     // Validate and Submit Form
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        setErrors({});
-        setSuccessMessage("");
-
-        const newErrors: any = {};
-
-        // 🔹 Validations
-        if (!formData.name.trim()) {
-            newErrors.name = "Full name is required.";
-        }
-
-        if (!/^0\d{2}-\d{3}-\d{4}$/.test(formData.tel)) {
-            newErrors.tel = "Invalid contact number format (e.g., 012-345-6789).";
-        }
-
-        if (!formData.birthdate || new Date(formData.birthdate) >= new Date()) {
-            newErrors.birthdate = "Birthdate must be a past date.";
-        }
-
-        if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-            newErrors.email = "Invalid email format.";
-        }
-
-        if (formData.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters.";
-        }
-        
-        if (formData.password !== confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match.";
-        }
-
-        // If Errors Exist, Stop Submission
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+        setValidateTrigger(true);
 
         // Send Data to API
         try {
             const response = await userRegister(formData);
-            
-            setSuccessMessage("Registration successful!");
-            setFormData({
-                name: "",
-                tel: "",
-                gender: "Male",
-                birthdate: "",
-                email: "",
-                password: "",
-            });
-            setConfirmPassword("");
 
-            Swal.fire({
-                title: "You are now registered!",
-                icon: "success",
-                draggable: true
-            }).then( () => {
-                router.push("/api/auth/login");
-            });
+            if (response.success) {
+
+                setSuccessMessage("Registration successful!");
+    
+                Swal.fire({
+                    title: "You are now registered!",
+                    icon: "success",
+                    draggable: true
+                }).then( () => {
+                    setFormData({
+                        name: "",
+                        tel: "",
+                        gender: "Male",
+                        birthdate: "",
+                        email: "",
+                        password: "",
+                    });
+                    setConfirmPassword("");
+    
+                    router.push("/api/auth/login");
+                });
+            } else {
+                // setErrors({ ...errors, ...{ server: "Failed to register. Please try again." } });
+            }
 
         } catch (error) {
             console.log(error);
-            setErrors({ server: "Failed to register. Please try again." });
+            // setErrors({ server: "Failed to register. Please try again." });
         }
     };
 
     return (
-        <div className="flex h-[100vh] items-center justify-center bg-gray-100">
+        <div className="flex min-h-[80vh] pt-10 pb-20 items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-6 mt-4 rounded-lg shadow-lg">
                 <h1 className="text-2xl font-bold text-center mb-4">Register</h1>
 
                 { successMessage && <p className="text-green-600 text-center">{ successMessage }</p> }
                 { errors.server && <p className="text-red-600 text-center">{ errors.server }</p> }
 
-                <form onSubmit={ handleSubmit } className="space-y-4">
+                <form className="space-y-4">
 
                     {/* Name */}
                     <div>
@@ -139,8 +159,8 @@ export default function Register() {
                     {/* Gender */}
                     <div >
                     <FormControl fullWidth>
-                    <InputLabel>Gender</InputLabel>
-                    <Select
+                        <InputLabel>Gender</InputLabel>
+                        <Select
                             label="Gender"
                             name="gender"
                             value={ formData.gender }
@@ -151,7 +171,7 @@ export default function Register() {
                             <MenuItem key="Unidentified" value="Unidentified">Unidentified</MenuItem>
                             
                         </Select>
-                     </FormControl>
+                    </FormControl>
                         
                     </div>
 
@@ -172,7 +192,7 @@ export default function Register() {
                     <div>
                         <TextField
                             label="Email"
-                            type="email"
+                            type="text"
                             name="email"
                             value={ formData.email }
                             onChange={ handleChange }
@@ -212,9 +232,13 @@ export default function Register() {
 
                     {/* Submit Button */}
                     <div className="flex justify-center items-center">
-                    <button type="submit" className="w-[50%] bg-[#007AFF] text-white py-2 px-4 rounded-xl hover:bg-[#00BCD4] hover:text-white transition">
-                        Register
-                    </button>
+                        <button
+                            type="submit"
+                            className="w-[50%] bg-[#007AFF] text-white py-2 px-4 rounded-xl hover:bg-[#00BCD4] hover:text-white transition"
+                            onClick={ handleSubmit }
+                        >
+                            Register
+                        </button>
                     </div>
 
                 </form>
