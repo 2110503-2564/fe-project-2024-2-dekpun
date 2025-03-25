@@ -9,24 +9,24 @@ import getAppointments from "@/libs/getAppointments";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import AppointmentCard from "./AppointmentCard";
-import Image from "next/image";
 
 export default function MyAppointment({
   appointmentsJson,
   session,
 }: MyAppointmentProps) {
-  const router = useRouter();
-  const token = session?.user.token;
-  const uid = session?.user._id;
 
-  const [appointments, setAppointments] = useState(
-    appointmentsJson?.data || []
-  );
+
+  const router = useRouter();
+  const token = session?.user.token
+  const uid = session?.user._id
+  
+  const [appointments, setAppointments] = useState(appointmentsJson?.data || []);
   const [status, setStatus] = useState("booked");
-  const [userProfile, setUserProfile] = useState<UserData | null>(null);
+  const [userProfile,setUserProfile] = useState<UserData|null>(null);
+  
 
   if (!appointmentsJson) {
-    return <p>No appointments available.</p>;
+      return <p>No appointments available.</p>;  
   }
 
     const handleEditStatus = (appointment: AppointmentData) => {
@@ -38,28 +38,25 @@ export default function MyAppointment({
             router.push(`../../appointment/manage?${queryString}`) 
         }
     }
-  };
 
   const handleUpdateStatus = async (appointmentsId: string, status: string) => {
     try {
-      const success = await updateAppointment(appointmentsId, status, token);
-      if (success) {
-        alert(status + " Appointment successfully!.");
-        setAppointments((prevAppointments) =>
-          prevAppointments.map((item) =>
-            item._id === appointmentsId
-              ? { ...item, booking_status: status }
-              : item
-          )
-        );
-      } else {
-        alert("Failed to " + status + " appointment.");
-      }
+        const success = await updateAppointment(appointmentsId, status, token)
+        if (success) {
+            alert(status + " Appointment successfully!.");
+            setAppointments((prevAppointments) =>
+                prevAppointments.map((item) =>
+                    item._id === appointmentsId ? { ...item, booking_status: status } : item
+                )
+            );
+        } else {
+            alert("Failed to " + status + " appointment.");
+        }
     } catch (error) {
-      console.error("Error while editing status appointment:", error);
-      alert("An error occurred while " + status + " the appointment.");
+        console.error("Error while editing status appointment:", error);
+        alert("An error occurred while " + status + " the appointment.");
     }
-  };
+}
 
   const handleDelete = async (appointmentId: string) => {
     try {
@@ -172,7 +169,7 @@ export default function MyAppointment({
                             title="edit button"
                             className="w-[40px] h-[40px]"
                             onClick={() =>
-                              handleEditStatus(appointmentItem._id, "booked")
+                              handleEditStatus(appointmentItem)
                             }
                           >
                             <svg
