@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "@/backend-config";
 
-export default async function getRole( role:string, page?:number, limit?:number, searchQuery?:string, sortBy?:string, sortOrder?:string ) {
+export default async function getRole( role:string, page?:number, limit?:number, searchQuery?:string, sortBy?:string ) {
 
     let queryString;
 
