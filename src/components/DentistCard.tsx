@@ -4,7 +4,7 @@ import Image from "next/image";
 import InteractiveCard from "./InteractiveCard";
 import { useRouter } from "next/navigation";
 
-export default function DentistCard( { dentist, imgSrc, area_id, onCompare }: { dentist: DentistJson; imgSrc: string; area_id: string, onCompare?: Function } ) {
+export default function DentistCard( { dentist, imgSrc, area_name, onCompare }: { dentist: DentistJson; imgSrc: string; area_name?: string, onCompare?: Function } ) {
 
     const router = useRouter();
     const makeApptWithDentHandler = () => {
@@ -41,6 +41,12 @@ export default function DentistCard( { dentist, imgSrc, area_id, onCompare }: { 
             <div className="p-4 text-center bg-white/70 backdrop-blur-md rounded-b-lg">
                 <h1 className="text-xl font-semibold text-gray-900"> {dentist.name} </h1>
                 <p className="text-md text-gray-500">Year of Experience: {dentist.year_of_experience} </p>
+                {
+                    area_name ?
+                        <p className="text-md text-gray-500">Expert in {area_name} </p>
+                    :
+                        <></>
+                }
             </div>
 
             {

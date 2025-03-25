@@ -1,11 +1,25 @@
 import { BACKEND_URL } from "@/backend-config";
 
-export default async function getDentists() {
+export default async function getDentists( page?:number, limit?:number, searchQuery?:string, sortBy?:string ) {
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/dentists`, { next: {tags:['dentists']} });
+    let queryString;
+
+    queryString = new URLSearchParams({
+        page: page?.toString() || "",
+        limit: limit?.toString() || "",
+        search: searchQuery || "", // Include search query
+        sort: sortBy || "",
+    }).toString()
+
+    const response = await fetch(`${BACKEND_URL}/api/v1/dentists?${queryString}`, { next: {tags:['dentists']} });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch dentists");
+        throw new Error(
+            (!page && !limit) ?
+                `Failed to fetch dentists`
+            :
+                `Failed to fetch dentists with page number: ${page} (${limit} dentists per page)`
+        );
     }
 
     return await response.json();
